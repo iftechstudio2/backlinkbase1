@@ -114,17 +114,18 @@ begin
 end; $$;
 revoke all on function consume_rate_limit(text,integer,integer) from public,anon,authenticated;
 
-create or replace function site_engagement(p_site_ids uuid[])
-returns table(site_id uuid,vote_count bigint,comment_count bigint)
-language sql security definer set search_path=public as $$
- select s.id,
-   (select count(*) from site_votes v where v.site_id=s.id),
-   (select count(*) from site_comments c where c.site_id=s.id and c.status='approved')
- from sites s where s.id=any(p_site_ids) and s.status='approved';
-$$;
-revoke all on function site_engagement(uuid[]) from public,anon,authenticated;
-grant execute on function site_engagement(uuid[]) to anon,authenticated;
 
-revoke execute on function rls_auto_enable() from anon,authenticated;
+revoke all on function rls_auto_enable() from public,anon,authenticated;
 
 -- Keep blocked_users and moderation_events server-only. Their RLS remains enabled with no public access.
+
+create or replace view site_engagement_counts as
+select s.id as site_id,
+       (select count(*) from site_votes v where v.site_id=s.id) as vote_count,
+       (select count(*) from site_comments c where c.site_id=s.id and c.status='approved') as comment_count
+from sites s
+where s.status='approved';
+revoke all on site_engagement_counts from public,anon,authenticated;
+grant select on site_engagement_counts to anon,authenticated;
+create policy if not exists "rate limit buckets private" on rate_limit_buckets for all to anon,authenticated using(false) with check(false);
+create policy if not exists "blocked clients private" on blocked_clients for all to anon,authenticated using(false) with check(false);
