@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://iftechstudio2.github.io/backlinkbase1/sitemap.xml
