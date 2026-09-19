@@ -1,4 +1,6 @@
 create extension if not exists pgcrypto;
+create schema if not exists extensions;
+create extension if not exists pg_trgm with schema extensions;
 create table if not exists categories(id uuid primary key default gen_random_uuid(),name text not null unique,slug text not null unique,description text default '',seo_title text default '',seo_description text default '',icon text,parent_id uuid references categories(id),created_at timestamptz default now(),updated_at timestamptz default now());
 create table if not exists sites(id uuid primary key default gen_random_uuid(),url text not null,normalized_url text not null unique,domain text not null,title text,description text,logo_url text,favicon_url text,og_title text,og_description text,og_image text,category_id uuid references categories(id),status text not null default 'pending' check(status in ('pending','approved','rejected','disabled')),submitted_at timestamptz default now(),updated_at timestamptz default now(),last_checked_at timestamptz,fetch_status text,fetch_error text,view_count bigint not null default 0,slug text not null unique);
 create index if not exists sites_category_idx on sites(category_id);create index if not exists sites_status_idx on sites(status);create index if not exists sites_submitted_idx on sites(submitted_at desc);create index if not exists sites_domain_idx on sites(domain);create index if not exists sites_title_idx on sites(title);
@@ -119,13 +121,54 @@ revoke all on function rls_auto_enable() from public,anon,authenticated;
 
 -- Keep blocked_users and moderation_events server-only. Their RLS remains enabled with no public access.
 
-create or replace view site_engagement_counts as
-select s.id as site_id,
-       (select count(*) from site_votes v where v.site_id=s.id) as vote_count,
-       (select count(*) from site_comments c where c.site_id=s.id and c.status='approved') as comment_count
-from sites s
-where s.status='approved';
+create table if not exists site_engagement_counts(
+  site_id uuid primary key references sites(id) on delete cascade,
+  vote_count bigint not null default 0,
+  comment_count bigint not null default 0
+);
+alter table site_engagement_counts enable row level security;
 revoke all on site_engagement_counts from public,anon,authenticated;
 grant select on site_engagement_counts to anon,authenticated;
+drop policy if exists "public engagement counts" on site_engagement_counts;
+create policy "public engagement counts" on site_engagement_counts for select to anon,authenticated using(true);
+
+create or replace function sync_vote_engagement()
+returns trigger language plpgsql set search_path=public as $
+begin
+ if tg_op='INSERT' then
+  insert into site_engagement_counts(site_id,vote_count) values(new.site_id,1)
+  on conflict(site_id) do update set vote_count=site_engagement_counts.vote_count+1;
+  return new;
+ elsif tg_op='DELETE' then
+  update site_engagement_counts set vote_count=greatest(0,vote_count-1) where site_id=old.site_id;
+  return old;
+ end if;
+ return null;
+end; $;
+drop trigger if exists trg_vote_engagement on site_votes;
+create trigger trg_vote_engagement after insert or delete on site_votes for each row execute function sync_vote_engagement();
+
+create or replace function sync_comment_engagement()
+returns trigger language plpgsql set search_path=public as $
+begin
+ if tg_op='INSERT' and new.status='approved' then
+  insert into site_engagement_counts(site_id,comment_count) values(new.site_id,1)
+  on conflict(site_id) do update set comment_count=site_engagement_counts.comment_count+1;
+ elsif tg_op='UPDATE' then
+  if old.status<>'approved' and new.status='approved' then
+   insert into site_engagement_counts(site_id,comment_count) values(new.site_id,1)
+   on conflict(site_id) do update set comment_count=site_engagement_counts.comment_count+1;
+  elsif old.status='approved' and new.status<>'approved' then
+   update site_engagement_counts set comment_count=greatest(0,comment_count-1) where site_id=old.site_id;
+  end if;
+ elsif tg_op='DELETE' and old.status='approved' then
+  update site_engagement_counts set comment_count=greatest(0,comment_count-1) where site_id=old.site_id;
+ end if;
+ return coalesce(new,old);
+end; $;
+drop trigger if exists trg_comment_engagement on site_comments;
+create trigger trg_comment_engagement after insert or update or delete on site_comments for each row execute function sync_comment_engagement();
+revoke all on function sync_vote_engagement() from public,anon,authenticated;
+revoke all on function sync_comment_engagement() from public,anon,authenticated;
 drop policy if exists "rate limit buckets private" on rate_limit_buckets; create policy "rate limit buckets private" on rate_limit_buckets for all to anon,authenticated using(false) with check(false);
 drop policy if exists "blocked clients private" on blocked_clients; create policy "blocked clients private" on blocked_clients for all to anon,authenticated using(false) with check(false);
