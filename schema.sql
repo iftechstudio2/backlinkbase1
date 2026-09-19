@@ -127,5 +127,5 @@ from sites s
 where s.status='approved';
 revoke all on site_engagement_counts from public,anon,authenticated;
 grant select on site_engagement_counts to anon,authenticated;
-create policy if not exists "rate limit buckets private" on rate_limit_buckets for all to anon,authenticated using(false) with check(false);
-create policy if not exists "blocked clients private" on blocked_clients for all to anon,authenticated using(false) with check(false);
+drop policy if exists "rate limit buckets private" on rate_limit_buckets; create policy "rate limit buckets private" on rate_limit_buckets for all to anon,authenticated using(false) with check(false);
+drop policy if exists "blocked clients private" on blocked_clients; create policy "blocked clients private" on blocked_clients for all to anon,authenticated using(false) with check(false);
