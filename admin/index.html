@@ -1,51 +1,81 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>BacklinkBase Admin — Sign in</title><style>
-*{box-sizing:border-box}html,body{min-height:100%}body{margin:0;background:#080910;color:#f5f5fa;font:14px system-ui,-apple-system,Segoe UI,sans-serif}.wrap{max-width:1200px;margin:auto;padding:20px}.top{border-bottom:1px solid #252633;background:#0d0e15;position:sticky;top:0}.topin{display:flex;align-items:center;justify-content:space-between;gap:12px}.brand{font-size:20px;font-weight:800}.brand span{color:#8067ff}.btn{border:1px solid #303140;background:#151621;color:#fff;border-radius:9px;padding:10px 14px;cursor:pointer;font-weight:700}.btn.primary{background:#7057ff;border-color:#7057ff}.btn.ok{background:#123c2d;border-color:#276f53}.btn.danger{background:#421d26;border-color:#71303e}.btn:disabled{opacity:.5}.card{background:#10111a;border:1px solid #282a38;border-radius:16px;padding:22px}[hidden]{display:none!important}.login{min-height:100vh;display:grid;place-items:center;padding:20px}.login .card{width:min(420px,100%)}h1{margin:0 0 8px}h2{margin:0 0 14px}.muted{color:#9b9dac;line-height:1.5}.field{display:grid;gap:6px;margin:14px 0}.field input{width:100%;padding:12px;border-radius:9px;border:1px solid #303140;background:#090a10;color:#fff}.err{color:#ff9aa9;background:#32151c;border:1px solid #622633;padding:10px;border-radius:9px;margin:10px 0}.stats{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin:20px 0}.stat{background:#10111a;border:1px solid #282a38;border-radius:12px;padding:15px}.stat b{display:block;font-size:25px}.stat small{color:#9294a5}.tabs{display:flex;gap:7px;overflow:auto;margin:18px 0}.tab{white-space:nowrap}.tab.active{background:#7057ff;border-color:#7057ff}.toolbar{display:flex;gap:8px;margin-bottom:12px}.toolbar input{flex:1}.item{background:#10111a;border:1px solid #282a38;border-radius:12px;padding:16px;margin:9px 0}.itemhead{display:flex;justify-content:space-between;gap:10px}.title{font-size:16px;font-weight:800}.domain{color:#858898;font-size:12px;word-break:break-all;margin-top:4px}.desc{color:#aaacbc;line-height:1.5}.actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}.empty{text-align:center;padding:40px;color:#898b9b}.badge{display:inline-block;padding:4px 8px;border-radius:99px;background:#1b1c27;color:#aaa;font-size:11px}@media(max-width:800px){.stats{grid-template-columns:repeat(2,1fr)}.itemhead{display:block}.toolbar{flex-wrap:wrap}.toolbar input{width:100%;flex-basis:100%}}
-
-:root{color-scheme:dark}
-body{min-height:100vh;background:radial-gradient(circle at 50% 10%,#17152b 0,#080910 42%,#06070c 100%)}
-.login-page{min-height:100vh;display:grid;place-items:center;padding:24px}
-.login-shell{width:min(440px,100%);padding:36px;background:rgba(16,17,26,.92);border:1px solid #2c2e40;border-radius:22px;box-shadow:0 24px 80px rgba(0,0,0,.45)}
-.login-brand{font-size:24px;font-weight:850;letter-spacing:-.7px;margin-bottom:26px}.login-brand span{color:#fff}.login-brand::first-letter{color:#fff}
-.login-badge{display:inline-flex;padding:6px 10px;border-radius:999px;background:#1b1830;color:#9f8dff;border:1px solid #39305e;font-size:10px;font-weight:800;letter-spacing:1.1px;margin-bottom:14px}
-.login-shell h1{font-size:34px;letter-spacing:-1.2px;margin:0 0 8px}.login-shell .muted{font-size:14px;margin-bottom:26px}
-.login-shell .field{margin:16px 0}.login-shell .field label{font-weight:650;font-size:13px;color:#d8d9e2}.login-shell .field input{background:#0b0c12;border-color:#303245;padding:14px;border-radius:11px;font-size:15px}
-.login-btn{width:100%;justify-content:center;display:flex;align-items:center;gap:10px;padding:13px 16px;font-size:15px;margin-top:8px}.login-btn span{font-size:20px;line-height:1}
-.login-foot{margin-top:25px;padding-top:18px;border-top:1px solid #242633;color:#77798a;font-size:11px;text-align:center}
-@media(max-width:520px){.login-page{padding:16px}.login-shell{padding:26px 20px;border-radius:18px}.login-shell h1{font-size:29px}}
-</style></head><body><div class="login-page">
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>BacklinkBase Admin — Sign in</title>
+  <style>
+    *{box-sizing:border-box}
+    :root{color-scheme:dark}
+    body{margin:0;min-height:100vh;background:#09090b;color:#f4f4f5;font-family:Inter,system-ui,-apple-system,sans-serif;display:grid;place-items:center;padding:24px}
+    .login-shell{width:min(440px,100%);padding:36px;background:#141417;border:1px solid #27272a;border-radius:20px;box-shadow:0 24px 60px rgba(0,0,0,.6)}
+    .login-brand{font-size:22px;font-weight:800;letter-spacing:-.5px;margin-bottom:20px;color:#ffffff}
+    .login-brand span{color:#a1a1aa}
+    .login-badge{display:inline-flex;padding:5px 10px;border-radius:999px;background:#27272a;color:#e4e4e7;border:1px solid #3f3f46;font-size:10px;font-weight:800;letter-spacing:1px;margin-bottom:14px}
+    h1{font-size:28px;letter-spacing:-1px;margin:0 0 8px;color:#ffffff}
+    .muted{color:#a1a1aa;font-size:14px;margin-bottom:24px;line-height:1.5}
+    .field{margin:16px 0;display:grid;gap:6px}
+    .field label{font-weight:600;font-size:13px;color:#d4d4d8}
+    .field input{background:#09090b;border:1px solid #27272a;padding:13px 14px;border-radius:10px;font-size:14px;color:#ffffff;outline:none}
+    .field input:focus{border-color:#71717a}
+    .login-btn{width:100%;display:flex;align-items:center;justify-content:center;gap:8px;padding:13px 16px;font-size:15px;margin-top:16px;background:#ffffff;color:#09090b;border:none;border-radius:10px;font-weight:700;cursor:pointer;transition:background .15s}
+    .login-btn:hover{background:#e4e4e7}
+    .login-btn:disabled{opacity:.6;cursor:not-allowed}
+    .err{color:#f87171;background:#261315;border:1px solid #451b1f;padding:12px;border-radius:9px;margin:12px 0;font-size:13px}
+    .login-foot{margin-top:24px;padding-top:16px;border-top:1px solid #27272a;color:#71717a;font-size:12px;text-align:center}
+  </style>
+</head>
+<body>
   <div class="login-shell">
-    <div class="login-brand"><span>Backlink</span>Base</div>
+    <div class="login-brand">Backlink<span>Base</span></div>
     <div class="login-badge">ADMIN PORTAL</div>
     <h1>Welcome back</h1>
-    <p class="muted">Sign in to manage websites, comments, domains and submissions.</p>
+    <p class="muted">Sign in to moderate submissions and manage directory websites.</p>
     <form id="loginForm">
-      <div class="field"><label for="email">Email</label><input id="email" type="email" autocomplete="username" placeholder="admin@example.com" required></div>
-      <div class="field"><label for="password">Password</label><input id="password" type="password" autocomplete="current-password" placeholder="••••••••" required></div>
-      <button class="btn primary login-btn" type="submit">Sign in <span>→</span></button>
+      <div class="field">
+        <label for="email">Email</label>
+        <input id="email" type="email" autocomplete="username" placeholder="admin@backlinkbase.org" required>
+      </div>
+      <div class="field">
+        <label for="password">Password</label>
+        <input id="password" type="password" autocomplete="current-password" placeholder="••••••••" required>
+      </div>
+      <button class="login-btn" type="submit">Sign in <span>→</span></button>
       <div id="loginError"></div>
     </form>
-    <div class="login-foot">BacklinkBase secure administration</div>
+    <div class="login-foot">BacklinkBase Secure Administration</div>
   </div>
-</div><script>
-const SB="https://trjrqfpxxfadxeabvtvf.supabase.co";
-const KEY="sb_publishable_syWcZtTdkXtgcdrc4-2aag_1cL9bCvM";
-async function login(ev){
-  ev.preventDefault();
-  const error=document.getElementById("loginError");
-  const button=document.querySelector(".login-btn");
-  error.textContent=""; button.disabled=true; button.innerHTML="Signing in…";
-  try{
-    const body={email:document.getElementById("email").value.trim(),password:document.getElementById("password").value};
-    const r=await fetch(SB+"/auth/v1/token?grant_type=password",{method:"POST",headers:{apikey:KEY,"Content-Type":"application/json"},body:JSON.stringify(body)});
-    const j=await r.json();
-    if(!r.ok) throw Error(j.error_description||j.msg||"Login failed");
-    localStorage.setItem("bb_admin_token",j.access_token);
-    localStorage.setItem("bb_admin_email",j.user?.email||body.email);
-    location.href="/admin/dashboard/";
-  }catch(e){
-    error.innerHTML='<div class="err">'+String(e.message).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))+'</div>';
-    button.disabled=false; button.innerHTML='Sign in <span>→</span>';
-  }
-}
-document.getElementById("loginForm").addEventListener("submit",login);
-</script></body></html>
+
+  <script>
+    const SB = "https://trjrqfpxxfadxeabvtvf.supabase.co";
+    const KEY = "sb_publishable_syWcZtTdkXtgcdrc4-2aag_1cL9bCvM";
+    async function login(ev){
+      ev.preventDefault();
+      const error = document.getElementById("loginError");
+      const button = document.querySelector(".login-btn");
+      error.textContent = ""; button.disabled = true; button.innerHTML = "Signing in…";
+      try {
+        const body = {
+          email: document.getElementById("email").value.trim(),
+          password: document.getElementById("password").value
+        };
+        const r = await fetch(SB + "/auth/v1/token?grant_type=password", {
+          method: "POST",
+          headers: { apikey: KEY, "Content-Type": "application/json" },
+          body: JSON.stringify(body)
+        });
+        const j = await r.json();
+        if (!r.ok) throw Error(j.error_description || j.msg || "Login failed");
+        localStorage.setItem("bb_admin_token", j.access_token);
+        localStorage.setItem("bb_admin_email", j.user?.email || body.email);
+        location.href = "/admin/dashboard/";
+      } catch(e) {
+        error.innerHTML = '<div class="err">' + String(e.message).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c])) + '</div>';
+        button.disabled = false; button.innerHTML = 'Sign in <span>→</span>';
+      }
+    }
+    document.getElementById("loginForm").addEventListener("submit", login);
+  </script>
+</body>
+</html>

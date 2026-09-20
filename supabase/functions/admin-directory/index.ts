@@ -55,7 +55,7 @@ serve(async (req) => {
     }
 
     if (action === "list") {
-      let q = supabaseAdmin.from("sites").select("*, categories(name)").order("created_at", { ascending: false });
+      let q = supabaseAdmin.from("sites").select("*, categories(name)").order("submitted_at", { ascending: false });
       if (status && status !== "all") {
         q = q.eq("status", status);
       }
