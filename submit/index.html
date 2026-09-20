@@ -11,7 +11,7 @@
   <meta property="og:url" content="https://backlinkbase.org/submit/">
   <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary_large_image">
-  <link rel="stylesheet" href="/assets/style.css">
+  <link rel="stylesheet" href="/assets/style.css?v=2.2">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -30,15 +30,21 @@
         <a href="/discover/">Discover</a>
         <a href="/categories/">Categories</a>
         <a href="/guidelines/">Guidelines</a>
-        <button type="button" class="theme-btn themeToggleBtn" aria-label="Toggle theme">☀️ Light</button><a class="btn primary" href="/submit/">+ Submit Site</a>
+        <a href="/blog/">Blog</a>
+        <button type="button" class="theme-btn themeToggleBtn" aria-label="Toggle theme">☀️ Light</button>
+        <a class="btn primary" href="/submit/">+ Submit Site</a>
       </nav>
-      <button class="nav-toggle" id="menuButton" aria-label="Toggle navigation">☰</button>
+      <button class="nav-toggle" id="menuButton" aria-label="Toggle navigation" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M4 6h16M4 12h16M4 18h16"></path></svg>
+      </button>
     </div>
-    <div class="mobile-nav" id="mobileNav"><button type="button" class="theme-btn themeToggleBtn" style="width:100%;margin-bottom:10px" aria-label="Toggle theme">☀️ Light</button>
+    <div class="mobile-nav" id="mobileNav">
+      <button type="button" class="theme-btn themeToggleBtn" style="width:100%;margin-bottom:6px" aria-label="Toggle theme">☀️ Light</button>
       <a href="/discover/">Discover</a>
       <a href="/categories/">Categories</a>
       <a href="/guidelines/">Guidelines</a>
-      <a href="/submit/">+ Submit Site</a>
+      <a href="/blog/">Blog</a>
+      <a class="btn primary" href="/submit/" style="text-align:center;margin-top:6px">+ Submit Site</a>
     </div>
   </header>
 
@@ -46,7 +52,7 @@
     <div class="page-header center">
       <span class="pill-badge">Directory Submission</span>
       <h1>Submit Your Website</h1>
-      <p class="subhead">List your website, product, or developer tool in the curated BacklinkBase index.</p>
+      <p class="subhead">List your website, SaaS product, or digital utility in the curated BacklinkBase index for discoverability and organic authority.</p>
     </div>
 
     <div class="form-card">
@@ -67,7 +73,7 @@
 
         <div class="field">
           <label for="title">Website Name / Title <span class="req">*</span></label>
-          <input type="text" id="title" placeholder="My SaaS Platform" required maxlength="100">
+          <input type="text" id="title" placeholder="e.g. My SaaS Platform" required maxlength="100">
         </div>
 
         <div class="field">
@@ -82,24 +88,58 @@
           </select>
         </div>
 
-        <div class="form-actions">
+        <div class="form-actions" style="margin-top:24px;">
           <button type="submit" id="submitBtn" class="btn primary full">Submit Website for Review</button>
         </div>
       </form>
     </div>
+
+    <!-- Submission FAQ Section -->
+    <section class="faq-section">
+      <h2>Frequently Asked Questions</h2>
+      <p class="faq-sub">Everything you need to know about getting your website listed on BacklinkBase.</p>
+      
+      <div class="faq-grid">
+        <div class="faq-item">
+          <div class="faq-q">Is submitting my website completely free?</div>
+          <div class="faq-a">Yes. Standard inclusion in the BacklinkBase directory is 100% free with no mandatory reciprocal links or hidden costs.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q">How long does the editorial review take?</div>
+          <div class="faq-a">Our moderation team reviews pending submissions within 24 to 48 hours to ensure content quality and verify safety compliance.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q">What types of websites are accepted?</div>
+          <div class="faq-a">We curate functional web apps, SaaS platforms, developer tools, blogs, educational portals, and genuine digital services. Submissions with spam, malware, or broken domains will be rejected.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q">How does a directory listing help my SEO?</div>
+          <div class="faq-a">A verified listing provides search engine crawlers with an authoritative reference pointing directly to your canonical domain, aiding search indexation and brand trust.</div>
+        </div>
+
+        <div class="faq-item">
+          <div class="faq-q">Can I update my listing information after approval?</div>
+          <div class="faq-a">Yes. If your branding or URL changes, contact our team via the Contact page with your domain details to update the record.</div>
+        </div>
+      </div>
+    </section>
   </main>
 
   <footer class="foot">
     <div class="wrap footin">
       <div class="foot-col">
         <div class="brand">Backlink<span>Base</span></div>
-        <p class="foot-about">The premier curated directory for quality websites, SaaS products, and digital utilities.</p>
+        <p class="foot-about">The curated index for discovering quality web tools, SaaS, developer utilities, and high-impact digital resources.</p>
       </div>
       <div class="foot-links">
         <div class="foot-col">
           <b>Explore</b>
           <a href="/discover/">Discover</a>
           <a href="/categories/">Categories</a>
+          <a href="/blog/">Blog & Guides</a>
           <a href="/submit/">Submit Website</a>
         </div>
         <div class="foot-col">
@@ -117,6 +157,6 @@
     </div>
   </footer>
 
-  <script src="/assets/app.js"></script>
+  <script src="/assets/app.js?v=2.2"></script>
 </body>
 </html>

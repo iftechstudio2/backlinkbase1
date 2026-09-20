@@ -83,10 +83,30 @@ function card(s){
 }
 
 function setupMenu(){
-  const b=document.getElementById("menuButton"),n=document.getElementById("mobileNav");
-  if(b&&n){
-    b.onclick=()=>n.classList.toggle("open");
-  }
+  const btn = document.getElementById("menuButton");
+  const nav = document.getElementById("mobileNav");
+  if(!btn || !nav) return;
+
+  btn.onclick = (e) => {
+    e.stopPropagation();
+    const isOpen = nav.classList.toggle("open");
+    btn.setAttribute("aria-expanded", isOpen ? "true" : "false");
+  };
+
+  document.addEventListener("click", (e) => {
+    if(!nav.contains(e.target) && e.target !== btn && !btn.contains(e.target)){
+      nav.classList.remove("open");
+      btn.setAttribute("aria-expanded", "false");
+    }
+  });
+
+  nav.querySelectorAll("a").forEach(a => {
+    a.addEventListener("click", () => {
+      nav.classList.remove("open");
+      btn.setAttribute("aria-expanded", "false");
+    });
+  });
+}
 }
 
 async function home(){
