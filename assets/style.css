@@ -809,59 +809,101 @@ footer, .foot {
   }
 }
 
-/* Card Foot & Social Share */
+
+/* Card Foot & Action Buttons */
 .card-foot, .site-actions {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-  margin-top: 16px;
-  padding-top: 14px;
+  gap: 8px;
+  margin-top: 14px;
+  padding-top: 12px;
   border-top: 1px solid var(--line);
+  position: relative;
 }
-.card-share {
+.card-actions {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
 }
-.share-lbl {
-  font-size: 11px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  font-weight: 700;
-  color: var(--text-muted);
-}
-.share-icons {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-}
-.share-btn {
+.action-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
+  gap: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: none;
+  padding: 6px 12px;
   border-radius: 6px;
   background: var(--bg-subtle);
   border: 1px solid var(--line);
-  color: var(--text-muted);
+  color: var(--text);
   cursor: pointer;
-  text-decoration: none;
   transition: all 0.15s ease;
-  padding: 0;
+  line-height: 1;
+  white-space: nowrap;
 }
-.share-btn:hover {
+.action-btn:hover {
+  background: var(--line);
   color: var(--text);
   border-color: var(--text-muted);
-  background: var(--line);
-  transform: translateY(-1px);
 }
-.share-btn.copied {
-  background: #10b981 !important;
-  color: #fff !important;
-  border-color: #10b981 !important;
+.action-btn.visit-btn {
+  background: var(--text);
+  color: var(--bg);
+  border-color: var(--text);
+}
+.action-btn.visit-btn:hover {
+  opacity: 0.88;
+}
+
+/* Share Popover */
+.share-popover-wrap {
+  position: relative;
+  display: inline-block;
+}
+.share-popover {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  right: 0;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 6px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.4);
+  display: none;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 145px;
+  z-index: 50;
+}
+.share-popover.open {
+  display: flex;
+}
+.share-popover-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+  text-decoration: none;
+  background: transparent;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  width: 100%;
+  text-align: left;
+  transition: background 0.12s;
+  box-sizing: border-box;
+}
+.share-popover-item:hover {
+  background: var(--bg-subtle);
+}
+.share-popover-item.copied {
+  color: #10b981;
 }
 
 /* Optional Support Section on Submit Page */
@@ -1006,9 +1048,4 @@ footer, .foot {
   gap: 10px;
   flex-wrap: wrap;
   margin-top: 10px;
-}
-.share-btn-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
 }
