@@ -1,3 +1,5 @@
+/admin.html /admin 301
+/admin /admin.html 200
 /backlinkbase.org / 301
 /backlinkbase.org/* /:splat 301
 /* /index.html 200
