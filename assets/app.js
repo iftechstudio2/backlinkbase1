@@ -7,8 +7,7 @@ const esc=s=>String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&
 function initTheme(){
   const saved = localStorage.getItem("bb_theme") || (window.matchMedia("(prefers-color-scheme: light)").matches ? "light" : "dark");
   setTheme(saved);
-  const btns = document.querySelectorAll(".themeToggleBtn");
-  btns.forEach(btn => {
+  document.querySelectorAll(".themeToggleBtn").forEach(btn => {
     btn.onclick = () => {
       const current = document.documentElement.getAttribute("data-theme") === "light" ? "light" : "dark";
       setTheme(current === "light" ? "dark" : "light");
@@ -30,6 +29,33 @@ function setTheme(theme){
 
 function updateThemeBtns(text){
   document.querySelectorAll(".themeToggleBtn").forEach(b => b.innerHTML = text);
+}
+
+// Mobile Menu Logic
+function setupMenu(){
+  const btn = document.getElementById("menuButton");
+  const nav = document.getElementById("mobileNav");
+  if(!btn || !nav) return;
+
+  btn.onclick = (e) => {
+    e.stopPropagation();
+    const isOpen = nav.classList.toggle("open");
+    btn.setAttribute("aria-expanded", isOpen ? "true" : "false");
+  };
+
+  document.addEventListener("click", (e) => {
+    if(!nav.contains(e.target) && e.target !== btn && !btn.contains(e.target)){
+      nav.classList.remove("open");
+      btn.setAttribute("aria-expanded", "false");
+    }
+  });
+
+  nav.querySelectorAll("a").forEach(a => {
+    a.addEventListener("click", () => {
+      nav.classList.remove("open");
+      btn.setAttribute("aria-expanded", "false");
+    });
+  });
 }
 
 async function sb(path,opts={}){
@@ -63,50 +89,23 @@ function card(s){
   const cat=s.categories?.name||s.category_name||s.category||"General";
   const targetUrl=s.url||("https://"+(s.domain||""));
   
-  return `<article class="card">
-    <div class="card-head">
-      <img class="favicon" src="${esc(iconFor(s))}" alt="${esc(title)} logo" loading="lazy" width="40" height="40" onerror="this.src='https://www.google.com/s2/favicons?domain=example.com&sz=128'">
-      <div class="card-meta">
-        <h3 class="card-title">${esc(title)}</h3>
-        <span class="card-domain">${esc(s.domain||"")}</span>
-      </div>
-      <span class="badge">${esc(cat)}</span>
-    </div>
-    <p class="card-desc">${esc(desc)}</p>
-    <div class="card-foot">
-      <a class="visit-btn" href="${esc(targetUrl)}" target="_blank" rel="noopener noreferrer nofollow">
-        Visit Website
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
-      </a>
-    </div>
-  </article>`;
-}
-
-function setupMenu(){
-  const btn = document.getElementById("menuButton");
-  const nav = document.getElementById("mobileNav");
-  if(!btn || !nav) return;
-
-  btn.onclick = (e) => {
-    e.stopPropagation();
-    const isOpen = nav.classList.toggle("open");
-    btn.setAttribute("aria-expanded", isOpen ? "true" : "false");
-  };
-
-  document.addEventListener("click", (e) => {
-    if(!nav.contains(e.target) && e.target !== btn && !btn.contains(e.target)){
-      nav.classList.remove("open");
-      btn.setAttribute("aria-expanded", "false");
-    }
-  });
-
-  nav.querySelectorAll("a").forEach(a => {
-    a.addEventListener("click", () => {
-      nav.classList.remove("open");
-      btn.setAttribute("aria-expanded", "false");
-    });
-  });
-}
+  return '<article class="card">' +
+    '<div class="card-head">' +
+      '<img class="favicon" src="' + esc(iconFor(s)) + '" alt="' + esc(title) + ' logo" loading="lazy" width="40" height="40" onerror="this.src=\'https://www.google.com/s2/favicons?domain=example.com&sz=128\'">' +
+      '<div class="card-meta">' +
+        '<h3 class="card-title">' + esc(title) + '</h3>' +
+        '<span class="card-domain">' + esc(s.domain||"") + '</span>' +
+      '</div>' +
+      '<span class="badge">' + esc(cat) + '</span>' +
+    '</div>' +
+    '<p class="card-desc">' + esc(desc) + '</p>' +
+    '<div class="card-foot">' +
+      '<a class="visit-btn" href="' + esc(targetUrl) + '" target="_blank" rel="noopener noreferrer nofollow">' +
+        'Visit Website ' +
+        '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>' +
+      '</a>' +
+    '</div>' +
+  '</article>';
 }
 
 async function home(){
@@ -114,12 +113,12 @@ async function home(){
   if(!box)return;
   box.innerHTML='<div class="loading-state" style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text-muted)"><span class="spinner"></span> Loading websites from directory...</div>';
   try{
-    // Use submitted_at instead of non-existent created_at!
     const rows=await sb("sites?select=id,title,description,domain,url,logo_url,submitted_at,categories(name)&status=eq.approved&order=submitted_at.desc&limit=18");
     if(!rows||!rows.length){
-      box.innerHTML='<div class="empty" style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text-muted)">No approved websites yet. Be the first to <a href="/submit/" style="color:var(--primary)">submit a website</a>!</div>';
+      box.innerHTML='<div class="empty" style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text-muted)">No approved websites yet. Be the first to <a href="/submit/" style="color:var(--text);font-weight:700">submit a website</a>!</div>';
       return;
     }
+    box.className="grid";
     box.innerHTML=rows.map(card).join("");
   }catch(e){
     console.error("Home loading error:", e);
@@ -137,19 +136,46 @@ const DISCOVER_LIMIT=24;
 
 async function discover(){
   const params=new URLSearchParams(location.search);
-  const q=params.get("q")||"";
-  const c=params.get("c")||"";
-  const searchInput=document.getElementById("discoverSearch");
+  const q=params.get("q")||params.get("query")||"";
+  const c=params.get("c")||params.get("category")||"";
+  
+  const searchInput=document.getElementById("discoverSearch") || document.getElementById("discoverQ");
   if(searchInput&&q)searchInput.value=q;
+  
+  const catSelect=document.getElementById("discoverCat");
+  if(catSelect){
+    try{
+      const cats=await sb("categories?select=id,name&order=name.asc");
+      if(cats&&cats.length){
+        catSelect.innerHTML='<option value="">All Categories</option>'+cats.map(catItem=>`<option value="${esc(catItem.name)}"${catItem.name===c?' selected':''}>${esc(catItem.name)}</option>`).join("");
+      }
+    }catch{}
+    catSelect.onchange=()=>{
+      applyDiscover(searchInput?.value.trim()||"", catSelect.value, 0);
+    };
+  }
+
+  if(searchInput){
+    searchInput.onkeydown=(e)=>{
+      if(e.key==='Enter')applyDiscover(searchInput.value.trim(), catSelect?.value||"", 0);
+    };
+  }
   
   await applyDiscover(q,c,0);
 }
 
 async function applyDiscover(q,cat,page=0){
-  const box=document.getElementById("discoverGrid");
+  const box=document.getElementById("discoverGrid") || document.getElementById("discoverResults");
   const countBox=document.getElementById("resultsCount");
   if(!box)return;
-  box.innerHTML='<div class="loading-state" style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text-muted)"><span class="spinner"></span> Discovering curated websites...</div>';
+  
+  const searchInput=document.getElementById("discoverSearch") || document.getElementById("discoverQ");
+  const catSelect=document.getElementById("discoverCat");
+  if(q===undefined && searchInput) q=searchInput.value.trim();
+  if(cat===undefined && catSelect) cat=catSelect.value;
+  
+  box.className="";
+  box.innerHTML='<div class="loading-state" style="text-align:center;padding:40px;color:var(--text-muted)"><span class="spinner"></span> Discovering curated websites...</div>';
   
   try{
     let path=`sites?select=id,title,description,domain,url,logo_url,submitted_at,categories(name)&status=eq.approved&order=submitted_at.desc&limit=${DISCOVER_LIMIT}&offset=${page*DISCOVER_LIMIT}`;
@@ -162,16 +188,17 @@ async function applyDiscover(q,cat,page=0){
     
     const rows=await sb(path);
     if(!rows||!rows.length){
-      box.innerHTML='<div class="empty" style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text-muted)">No matching websites found. <a href="/submit/" style="color:var(--primary)">Submit a website</a></div>';
+      box.innerHTML='<div class="empty" style="text-align:center;padding:40px;color:var(--text-muted)">No matching websites found. <a href="/submit/" style="color:var(--text);font-weight:700">Submit a website</a></div>';
       if(countBox)countBox.textContent="0 websites found";
       return;
     }
     
     if(countBox)countBox.textContent=`Showing ${rows.length} verified websites`;
+    box.className="grid";
     box.innerHTML=rows.map(card).join("");
   }catch(e){
     console.error("Discover error:", e);
-    box.innerHTML='<div class="empty" style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text-muted)">Error loading directory results.</div>';
+    box.innerHTML='<div class="empty" style="text-align:center;padding:40px;color:var(--text-muted)">Error loading directory results.</div>';
   }
 }
 
@@ -190,7 +217,6 @@ function domain(u){
   }
 }
 
-// User triggers fetch manually via button
 async function fetchMeta(){
   const input=document.getElementById("url");
   const status=document.getElementById("metaStatus");
@@ -228,7 +254,7 @@ async function fetchMeta(){
     
     const preview=document.getElementById("preview");
     if(preview){
-      preview.innerHTML=`<div style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--bg-subtle);border-radius:10px;margin-bottom:16px"><img class="favicon" src="${esc(logoVal)}" alt="Logo" width="40" height="40"><div><b>${esc(titleVal)}</b><div style="font-size:12px;color:var(--text-muted)">${esc(d)}</div></div></div>`;
+      preview.innerHTML=`<div style="display:flex;align-items:center;gap:12px;padding:12px;background:var(--bg-subtle);border:1px solid var(--line);border-radius:10px;margin-bottom:16px"><img class="favicon" src="${esc(logoVal)}" alt="Logo" width="40" height="40"><div><b>${esc(titleVal)}</b><div style="font-size:12px;color:var(--text-muted)">${esc(d)}</div></div></div>`;
       preview.classList.add("show");
     }
     
@@ -312,6 +338,6 @@ document.addEventListener("DOMContentLoaded",()=>{
   initTheme();
   setupMenu();
   if(document.getElementById("latest"))home();
-  if(document.getElementById("discoverGrid"))discover();
+  if(document.getElementById("discoverGrid") || document.getElementById("discoverResults"))discover();
   if(document.getElementById("submitForm"))initSubmit();
 });
