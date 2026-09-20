@@ -1,68 +1,181 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>BacklinkBase Admin — Dashboard</title><style>
-*{box-sizing:border-box}html,body{min-height:100%}body{margin:0;background:#080910;color:#f5f5fa;font:14px system-ui,-apple-system,Segoe UI,sans-serif}.wrap{max-width:1200px;margin:auto;padding:20px}.top{border-bottom:1px solid #252633;background:#0d0e15;position:sticky;top:0}.topin{display:flex;align-items:center;justify-content:space-between;gap:12px}.brand{font-size:20px;font-weight:800}.brand span{color:#8067ff}.btn{border:1px solid #303140;background:#151621;color:#fff;border-radius:9px;padding:10px 14px;cursor:pointer;font-weight:700}.btn.primary{background:#7057ff;border-color:#7057ff}.btn.ok{background:#123c2d;border-color:#276f53}.btn.danger{background:#421d26;border-color:#71303e}.btn:disabled{opacity:.5}.card{background:#10111a;border:1px solid #282a38;border-radius:16px;padding:22px}[hidden]{display:none!important}.login{min-height:100vh;display:grid;place-items:center;padding:20px}.login .card{width:min(420px,100%)}h1{margin:0 0 8px}h2{margin:0 0 14px}.muted{color:#9b9dac;line-height:1.5}.field{display:grid;gap:6px;margin:14px 0}.field input{width:100%;padding:12px;border-radius:9px;border:1px solid #303140;background:#090a10;color:#fff}.err{color:#ff9aa9;background:#32151c;border:1px solid #622633;padding:10px;border-radius:9px;margin:10px 0}.stats{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin:20px 0}.stat{background:#10111a;border:1px solid #282a38;border-radius:12px;padding:15px}.stat b{display:block;font-size:25px}.stat small{color:#9294a5}.tabs{display:flex;gap:7px;overflow:auto;margin:18px 0}.tab{white-space:nowrap}.tab.active{background:#7057ff;border-color:#7057ff}.toolbar{display:flex;gap:8px;margin-bottom:12px}.toolbar input{flex:1}.item{background:#10111a;border:1px solid #282a38;border-radius:12px;padding:16px;margin:9px 0}.itemhead{display:flex;justify-content:space-between;gap:10px}.title{font-size:16px;font-weight:800}.domain{color:#858898;font-size:12px;word-break:break-all;margin-top:4px}.desc{color:#aaacbc;line-height:1.5}.actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}.empty{text-align:center;padding:40px;color:#898b9b}.badge{display:inline-block;padding:4px 8px;border-radius:99px;background:#1b1c27;color:#aaa;font-size:11px}@media(max-width:800px){.stats{grid-template-columns:repeat(2,1fr)}.itemhead{display:block}.toolbar{flex-wrap:wrap}.toolbar input{width:100%;flex-basis:100%}}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="robots" content="noindex,nofollow">
+  <title>Admin Dashboard — BacklinkBase</title>
+  <link rel="stylesheet" href="/assets/style.css">
+  <style>
+    :root{color-scheme:dark}
+    body{background:#080910;color:#f5f5fa;font-family:Inter,system-ui,sans-serif;margin:0}
+    .admin-nav{display:flex;justify-content:space-between;align-items:center;padding:16px 24px;background:#0f1019;border-bottom:1px solid #1f2130}
+    .admin-wrap{max-width:1200px;margin:28px auto;padding:0 20px}
+    .stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px;margin-bottom:28px}
+    .stat-card{background:#121420;border:1px solid #23263a;border-radius:14px;padding:20px}
+    .stat-card .num{font-size:32px;font-weight:800;color:#fff;margin:8px 0 0}
+    .stat-card .lbl{font-size:13px;color:#8f92a8;text-transform:uppercase;letter-spacing:.8px;font-weight:600}
+    .table-card{background:#121420;border:1px solid #23263a;border-radius:14px;padding:20px;overflow-x:auto}
+    table{width:100%;border-collapse:collapse;text-align:left}
+    th{padding:12px 14px;color:#8f92a8;font-size:12px;text-transform:uppercase;border-bottom:1px solid #23263a}
+    td{padding:14px;border-bottom:1px solid #1a1c2b;font-size:14px}
+    .act-btn{padding:6px 12px;border-radius:8px;font-size:12px;font-weight:700;border:0;cursor:pointer;margin-right:6px}
+    .act-approve{background:#10b981;color:#fff}
+    .act-reject{background:#ef4444;color:#fff}
+    .act-del{background:#374151;color:#fff}
+    .pill-status{padding:4px 8px;border-radius:999px;font-size:11px;font-weight:700;text-transform:uppercase}
+    .pill-pending{background:#3b2d14;color:#fbbf24}
+    .pill-approved{background:#143427;color:#34d399}
+    .pill-rejected{background:#3b181e;color:#f87171}
+  </style>
+</head>
+<body>
+  <header class="admin-nav">
+    <div class="brand">Backlink<span>Base</span> <small style="font-size:12px;color:#7c5cff;font-weight:700">ADMIN</small></div>
+    <div>
+      <span id="adminEmail" style="margin-right:16px;font-size:13px;color:#8f92a8"></span>
+      <button class="btn secondary" onclick="logout()" style="padding:8px 14px;font-size:13px">Sign Out</button>
+    </div>
+  </header>
 
-:root{color-scheme:dark}
-body{background:#080910}
-.top{backdrop-filter:blur(14px);z-index:10}
-.topin{min-height:66px}.brand{letter-spacing:-.5px}
-.admin-shell{display:grid;grid-template-columns:220px 1fr;min-height:calc(100vh - 66px)}
-.sidebar{border-right:1px solid #242633;background:#0c0d14;padding:18px 12px;position:sticky;top:66px;height:calc(100vh - 66px)}
-.side-label{text-transform:uppercase;font-size:10px;font-weight:800;letter-spacing:1px;color:#6f7180;padding:10px 10px 7px}
-.side-btn{display:block;width:100%;text-align:left;background:transparent;border:0;color:#aeb0bd;border-radius:9px;padding:10px;font-weight:650;cursor:pointer;margin:2px 0}
-.side-btn.active,.side-btn:hover{background:#19172a;color:#fff}
-.dashboard-main{padding:26px;min-width:0}
-.page-title{display:flex;align-items:flex-end;justify-content:space-between;gap:15px;margin-bottom:22px}.page-title h1{font-size:28px;letter-spacing:-.8px;margin:0}.page-title p{margin:5px 0 0;color:#858898}
-.stats{margin:0 0 22px}.stat{padding:17px}.stat b{font-size:28px}
-.tabs{margin:0 0 16px;border-bottom:1px solid #242633;padding-bottom:10px}
-.toolbar{margin-bottom:16px}.toolbar input{min-width:0}
-.item{box-shadow:0 5px 20px rgba(0,0,0,.12)}
-@media(max-width:850px){.admin-shell{grid-template-columns:1fr}.sidebar{display:none}.dashboard-main{padding:18px}.page-title{display:block}}
+  <main class="admin-wrap">
+    <div class="stats-grid">
+      <div class="stat-card"><div class="lbl">Total Sites</div><div class="num" id="statTotal">-</div></div>
+      <div class="stat-card"><div class="lbl">Pending Review</div><div class="num" id="statPending" style="color:#fbbf24">-</div></div>
+      <div class="stat-card"><div class="lbl">Approved</div><div class="num" id="statApproved" style="color:#34d399">-</div></div>
+      <div class="stat-card"><div class="lbl">Categories</div><div class="num" id="statCategories">-</div></div>
+    </div>
 
-:root{color-scheme:dark}body{background:#080910}.admin-shell{display:grid;grid-template-columns:220px 1fr;min-height:calc(100vh - 66px)}.top{z-index:10}.sidebar{border-right:1px solid #242633;background:#0c0d14;padding:18px 12px;position:sticky;top:66px;height:calc(100vh - 66px)}.side-label{text-transform:uppercase;font-size:10px;font-weight:800;letter-spacing:1px;color:#6f7180;padding:10px}.side-btn{display:block;width:100%;text-align:left;background:transparent;border:0;color:#aeb0bd;border-radius:9px;padding:11px 10px;font-weight:650;cursor:pointer;margin:2px 0}.side-btn.active,.side-btn:hover{background:#19172a;color:#fff}.dashboard-main{padding:28px;min-width:0}.page-title{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:22px}.page-title h1{font-size:30px;letter-spacing:-1px;margin:0}.page-title p{color:#858898;margin:5px 0 0}.stats{grid-template-columns:repeat(3,1fr);margin:0 0 22px}.welcome-grid{display:grid;grid-template-columns:1.4fr 1fr;gap:14px}.panel{background:#10111a;border:1px solid #282a38;border-radius:16px;padding:22px}.panel h2{margin:8px 0}.panel p{color:#9b9dac;line-height:1.6}.eyebrow{font-size:10px;font-weight:800;letter-spacing:1.1px;color:#8f7dff}.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}.inline{display:flex;gap:8px;margin:15px 0}.inline input{flex:1}.row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-top:1px solid #252633;gap:10px;word-break:break-all}.settings{max-width:760px}.setting{display:flex;justify-content:space-between;align-items:center;gap:20px}.setting h2{margin:0 0 5px}.switch input{display:none}.switch span{display:block;width:52px;height:30px;border-radius:99px;background:#303241;position:relative;cursor:pointer}.switch span:after{content:"";width:22px;height:22px;border-radius:50%;background:#fff;position:absolute;top:4px;left:4px;transition:.2s}.switch input:checked+span{background:#7057ff}.switch input:checked+span:after{left:26px}.notice{margin:20px 0;padding:13px 15px;border:1px solid #3a345c;background:#17152a;border-radius:10px;color:#aaa6c4}.empty{padding:35px;text-align:center;color:#898b9b}.toolbar input,.toolbar select{flex:1;padding:12px;border-radius:9px;border:1px solid #303140;background:#090a10;color:#fff}.item{background:#10111a;border:1px solid #282a38;border-radius:12px;padding:16px;margin:9px 0}.itemhead{display:flex;justify-content:space-between;gap:10px}.title{font-size:16px;font-weight:800}.domain{color:#858898;font-size:12px;word-break:break-all;margin-top:4px}.desc{color:#aaacbc;line-height:1.5}.actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}.badge{padding:4px 8px;border-radius:99px;background:#1b1c27;color:#aaa;font-size:11px}@media(max-width:850px){.admin-shell{grid-template-columns:1fr}.sidebar{position:static;height:auto;display:flex;overflow:auto;gap:5px;border-right:0;border-bottom:1px solid #242633}.side-label{display:none}.side-btn{white-space:nowrap}.dashboard-main{padding:18px}.stats{grid-template-columns:repeat(2,1fr)}.welcome-grid,.two-col{grid-template-columns:1fr}}<style>
-/* Final responsive CMS layout */
-html,body{width:100%;overflow-x:hidden}
-.admin-shell{display:grid;grid-template-columns:220px minmax(0,1fr);min-height:calc(100vh - 66px)}
-.sidebar{height:auto;min-height:calc(100vh - 66px);align-self:start}
-.dashboard-main{width:100%;min-width:0}
-@media (max-width:850px){
-  .admin-shell{display:block;min-height:0}
-  .sidebar{position:static;width:100%;height:auto;min-height:0;display:flex;flex-direction:row;align-items:center;overflow-x:auto;overflow-y:hidden;gap:4px;padding:10px;border-right:0;border-bottom:1px solid #242633;background:#0c0d14}
-  .side-label{display:none}
-  .side-btn{flex:0 0 auto;width:auto;height:auto;min-height:40px;white-space:nowrap;padding:10px 14px;margin:0}
-  .dashboard-main{padding:18px}
-  .stats{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .welcome-grid,.two-col{grid-template-columns:1fr}
-}
-@media (max-width:480px){
-  .topin{padding:14px 16px}
-  .brand{font-size:18px}
-  .topin .muted{display:none}
-  .dashboard-main{padding:14px}
-  .stats{gap:8px}
-  .stat{padding:13px}
-  .stat b{font-size:23px}
-}
-</style></style></head><body>
-<header class="top"><div class="wrap topin"><div class="brand">Backlink<span>Base</span> CMS</div><div><span id="userEmail" class="muted"></span> <button class="btn" onclick="logout()">Sign out</button></div></div></header>
-<div class="admin-shell"><aside class="sidebar"><div class="side-label">Main</div><button class="side-btn active" data-view="dashboard" onclick="nav('dashboard')">Dashboard</button><button class="side-btn" data-view="sites" onclick="nav('sites')">Websites</button><button class="side-btn" data-view="comments" onclick="nav('comments')">Comments</button><div class="side-label">Security</div><button class="side-btn" data-view="moderation" onclick="nav('moderation')">Moderation</button><button class="side-btn" data-view="settings" onclick="nav('settings')">Settings</button></aside><main class="dashboard-main" id="content"></main></div><script>
-const SB="https://trjrqfpxxfadxeabvtvf.supabase.co";const KEY="sb_publishable_syWcZtTdkXtgcdrc4-2aag_1cL9bCvM";const API=SB+"/functions/v1/admin-directory";let token=localStorage.getItem("bb_admin_token")||"",currentView="dashboard";
-const $=id=>document.getElementById(id);
-const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-async function api(action,data={}){const r=await fetch(API,{method:"POST",headers:{apikey:KEY,Authorization:"Bearer "+token,"Content-Type":"application/json"},body:JSON.stringify({action,...data})});let j={};try{j=await r.json()}catch{}if(!r.ok)throw Error(j.error==="forbidden"?"This account is not an admin.":j.error||"Request failed");return j}
-function logout(){localStorage.removeItem("bb_admin_token");localStorage.removeItem("bb_admin_email");location.href="/admin/"}
-function nav(view){currentView=view;document.querySelectorAll(".side-btn[data-view]").forEach(b=>b.classList.toggle("active",b.dataset.view===view));renderView()}
-async function stats(){const j=await api("stats");["Pending","Approved","Rejected","Disabled","Comments","Domains"].forEach((x,i)=>$(["sPending","sApproved","sRejected","sDisabled","sComments","sDomains"][i]).textContent=[j.stats.pending,j.stats.approved,j.stats.rejected,j.stats.disabled,j.stats.pending_comments,j.stats.blocked_domains][i]);}
-async function loadDashboard(){renderView();await stats()}
-function renderView(){const main=$("content");if(currentView==="dashboard")main.innerHTML='<div class="page-title"><div><h1>Dashboard</h1><p>Overview of your directory.</p></div></div><div class="stats">'+stat("sPending","Pending submissions")+stat("sApproved","Approved sites")+stat("sRejected","Rejected sites")+stat("sDisabled","Disabled sites")+stat("sComments","Pending comments")+stat("sDomains","Blocked domains")+'</div><div class="welcome-grid"><div class="panel"><span class="eyebrow">DIRECTORY</span><h2>BacklinkBase CMS</h2><p>Manage submissions, moderation, comments, blocked domains and publishing settings from the sidebar.</p></div><div class="panel"><span class="eyebrow">AUTOMATION</span><h2>Submission approval</h2><p id="approvalSummary">Loading setting…</p><button class="btn primary" onclick="nav(&quot;settings&quot;)">Open settings</button></div></div>';else if(currentView==="sites")loadSites();else if(currentView==="comments")loadComments();else if(currentView==="moderation")loadModeration();else if(currentView==="settings")loadSettings();}
-function stat(id,label){return '<div class="stat"><b id="'+id+'">—</b><small>'+label+'</small></div>'}
-async function loadSites(){const main=$("content");main.innerHTML='<div class="page-title"><div><h1>Websites</h1><p>Review and manage directory submissions.</p></div></div><div class="toolbar"><input id="q" placeholder="Search title, domain or URL"><button class="btn" onclick="loadSites()">Search</button></div><div id="siteList"></div>';const q=($("q")?.value||"").trim();const j=await api("sites",{status:"pending",page:1,per_page:50,q});$("siteList").innerHTML=(j.items||[]).map(s=>'<div class="item"><div class="itemhead"><div><div class="title">'+esc(s.title||s.domain)+'</div><div class="domain">'+esc(s.domain||"")+' · '+esc(s.url||"")+'</div></div><span class="badge">'+esc(s.categories?.name||"Uncategorized")+'</span></div><p class="desc">'+esc(s.description||"No description")+'</p><div class="actions"><button class="btn ok" onclick="siteStatus(&quot;'+s.id+'&quot;,&quot;approved&quot;)">Approve</button><button class="btn" onclick="siteStatus(&quot;'+s.id+'&quot;,&quot;rejected&quot;)">Reject</button><button class="btn danger" onclick="siteStatus(&quot;'+s.id+'&quot;,&quot;disabled&quot;)">Disable</button><a class="btn" target="_blank" href="'+esc(s.url||"#")+'">Visit</a></div></div>').join("")||'<div class="empty">No pending submissions.</div>'}
-async function siteStatus(id,status){const reason=(status!=="approved"?(prompt("Reason (optional)")||""):"");await api("site_status",{id,status,reason});await stats();loadSites()}
-async function loadComments(){const main=$("content");main.innerHTML='<div class="page-title"><div><h1>Comments</h1><p>Moderate user comments.</p></div></div><div class="toolbar"><select id="commentStatus"><option value="pending">Pending</option><option value="approved">Approved</option><option value="rejected">Rejected</option><option value="blocked">Blocked</option></select><button class="btn" onclick="loadComments()">Load</button></div><div id="commentList"></div>';const st=$("commentStatus").value;const j=await api("comments",{status:st});$("commentList").innerHTML=(j.items||[]).map(c=>'<div class="item"><div class="title">'+esc(c.sites?.title||"Website")+'</div><div class="domain">'+esc(c.sites?.domain||"")+'</div><p class="desc">'+esc(c.body)+'</p><div class="actions"><button class="btn ok" onclick="commentStatus(&quot;'+c.id+'&quot;,&quot;approved&quot;)">Approve</button><button class="btn" onclick="commentStatus(&quot;'+c.id+'&quot;,&quot;rejected&quot;)">Reject</button><button class="btn danger" onclick="commentStatus(&quot;'+c.id+'&quot;,&quot;blocked&quot;)">Block</button></div></div>').join("")||'<div class="empty">No comments.</div>'}
-async function commentStatus(id,status){await api("comment_status",{id,status,reason:status==="approved"?"":(prompt("Reason (optional)")||"")});await stats();loadComments()}
-async function loadModeration(){const main=$("content");main.innerHTML='<div class="page-title"><div><h1>Moderation</h1><p>Control blocked domains and clients.</p></div></div><div class="two-col"><div class="panel"><h2>Blocked domains</h2><div class="inline"><input id="domainInput" placeholder="example.com"><button class="btn primary" onclick="blockDomain()">Block</button></div><div id="domainList"></div></div><div class="panel"><h2>Blocked clients</h2><div id="clientList"></div></div></div>';const [d,c]=await Promise.all([api("domains"),api("clients")]);$("domainList").innerHTML=(d.items||[]).map(x=>'<div class="row"><span>'+esc(x.domain)+'</span><button class="btn ok" onclick="unblockDomain(&quot;'+esc(x.domain)+'&quot;)">Unblock</button></div>').join("")||'<div class="muted">No blocked domains.</div>';$("clientList").innerHTML=(c.items||[]).map(x=>'<div class="row"><span>'+esc(x.client_hash)+'</span><button class="btn ok" onclick="unblockClient(&quot;'+esc(x.client_hash)+'&quot;)">Unblock</button></div>').join("")||'<div class="muted">No blocked clients.</div>'}
-async function blockDomain(){const d=$("domainInput").value.trim();if(!d)return;await api("block_domain",{domain:d});loadModeration();stats()}
-async function unblockDomain(d){await api("unblock_domain",{domain:d});loadModeration();stats()}
-async function unblockClient(h){await api("unblock_client",{client_hash:h});loadModeration()}
-async function loadSettings(){const main=$("content");main.innerHTML='<div class="page-title"><div><h1>Settings</h1><p>Configure how new websites are published.</p></div></div><div class="panel settings"><div class="setting"><div><h2>Automatic approval</h2><p class="muted">When enabled, submissions that pass every existing security, domain, content and rate-limit check are published automatically.</p></div><label class="switch"><input id="autoApprove" type="checkbox"><span></span></label></div><div class="notice">Recommended mode: <b>Safe auto-approval</b>. Unsafe/private targets, blocked domains, prohibited content, duplicates and rate-limited submissions are still rejected.</div><button class="btn primary" onclick="saveSettings()">Save settings</button><div id="saveMsg" class="muted"></div></div>';const j=await api("settings_get");$("autoApprove").checked=!!j.settings.auto_approve}
-async function saveSettings(){const on=$("autoApprove").checked;await api("settings_update",{auto_approve:on,auto_approve_mode:"safe"});$("saveMsg").textContent="Settings saved.";stats()}
-</script></body></html>
+    <div class="table-card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+        <h2 style="margin:0;font-size:18px">Website Submissions</h2>
+        <div style="display:flex;gap:10px">
+          <select id="filterStatus" onchange="loadSites()" style="background:#0f1019;color:#fff;border:1px solid #2c2f44;padding:8px 12px;border-radius:8px">
+            <option value="pending">Pending Only</option>
+            <option value="approved">Approved</option>
+            <option value="all">All Sites</option>
+          </select>
+          <button class="btn primary" onclick="loadSites()" style="padding:8px 14px;font-size:13px">Refresh</button>
+        </div>
+      </div>
+
+      <div id="tableStatus"></div>
+      <table>
+        <thead>
+          <tr>
+            <th>Website</th>
+            <th>Domain</th>
+            <th>Category</th>
+            <th>Status</th>
+            <th>Submitted</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="sitesTbody">
+          <tr><td colspan="6" style="text-align:center;padding:24px">Loading submissions...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </main>
+
+  <script>
+    const SB = "https://trjrqfpxxfadxeabvtvf.supabase.co";
+    const KEY = "sb_publishable_syWcZtTdkXtgcdrc4-2aag_1cL9bCvM";
+    const API = SB + "/functions/v1/admin-directory";
+    const token = localStorage.getItem("bb_admin_token");
+
+    if (!token) {
+      location.href = "/admin/";
+    }
+
+    async function req(action, data = {}) {
+      const r = await fetch(API, {
+        method: "POST",
+        headers: {
+          "apikey": KEY,
+          "Authorization": "Bearer " + token,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ action, ...data })
+      });
+      if (!r.ok) {
+        if (r.status === 401) {
+          localStorage.removeItem("bb_admin_token");
+          location.href = "/admin/";
+        }
+        throw new Error(await r.text());
+      }
+      return r.json();
+    }
+
+    function logout() {
+      localStorage.removeItem("bb_admin_token");
+      location.href = "/admin/";
+    }
+
+    async function loadStats() {
+      try {
+        const d = await req("stats");
+        document.getElementById("statTotal").textContent = d.total;
+        document.getElementById("statPending").textContent = d.pending;
+        document.getElementById("statApproved").textContent = d.approved;
+        document.getElementById("statCategories").textContent = d.categories;
+      } catch(e) { console.error(e); }
+    }
+
+    async function loadSites() {
+      const status = document.getElementById("filterStatus").value;
+      const tbody = document.getElementById("sitesTbody");
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px">Loading...</td></tr>';
+      try {
+        const res = await req("list", { status });
+        const sites = res.sites || [];
+        if (!sites.length) {
+          tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:20px;color:#8f92a8">No websites in this status.</td></tr>';
+          return;
+        }
+        tbody.innerHTML = sites.map(s => `
+          <tr>
+            <td><b>${escapeHtml(s.title || s.domain)}</b></td>
+            <td><a href="${escapeHtml(s.url)}" target="_blank" style="color:#7c5cff">${escapeHtml(s.domain)}</a></td>
+            <td>${escapeHtml(s.categories?.name || "-")}</td>
+            <td><span class="pill-status pill-${s.status}">${s.status}</span></td>
+            <td style="color:#8f92a8;font-size:12px">${new Date(s.created_at).toLocaleDateString()}</td>
+            <td>
+              ${s.status !== 'approved' ? `<button class="act-btn act-approve" onclick="updateSite('${s.id}', 'approved')">Approve</button>` : ''}
+              ${s.status !== 'rejected' ? `<button class="act-btn act-reject" onclick="updateSite('${s.id}', 'rejected')">Reject</button>` : ''}
+              <button class="act-btn act-del" onclick="deleteSite('${s.id}')">Delete</button>
+            </td>
+          </tr>
+        `).join("");
+      } catch(e) {
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;color:#ef4444">${escapeHtml(e.message)}</td></tr>`;
+      }
+    }
+
+    async function updateSite(id, status) {
+      try {
+        await req("update_status", { id, status });
+        loadStats();
+        loadSites();
+      } catch(e) { alert("Error: " + e.message); }
+    }
+
+    async function deleteSite(id) {
+      if (!confirm("Are you sure you want to delete this listing permanently?")) return;
+      try {
+        await req("delete", { id });
+        loadStats();
+        loadSites();
+      } catch(e) { alert("Error: " + e.message); }
+    }
+
+    function escapeHtml(str) {
+      return String(str || "").replace(/[&<>"']/g, m => ({ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;" }[m]));
+    }
+
+    loadStats();
+    loadSites();
+  </script>
+</body>
+</html>

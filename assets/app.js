@@ -1,23 +1,263 @@
 const CATS=["AI","Artificial Intelligence","Technology","Software","SaaS","Web Tools","Developer Tools","Programming","Design","Graphics","Marketing","SEO","Business","Finance","E-commerce","Shopping","Education","Learning","News","Media","Entertainment","Games","Gaming","Health","Fitness","Travel","Food","Recipes","Lifestyle","Personal Blogs","Photography","Video","Music","Sports","Jobs","Careers","Real Estate","Construction","Home Improvement","Automotive","Legal","Government","Nonprofit","Communities","Forums","Social","Productivity","Utilities","Internet Services","Hosting","Domains","Security","Cybersecurity","Mobile Apps","Android","iOS","WordPress","Blogging","Newsletters","Online Services","Directories","Reference","Science","Research","Books","Literature","Art","Fashion","Beauty","Parenting","Pets","Shopping Deals","Local Businesses","Startups","Agencies","Freelancers","Portfolios","Other"];
-const SUPABASE_URL="https://trjrqfpxxfadxeabvtvf.supabase.co",SUPABASE_KEY="sb_publishable_syWcZtTdkXtgcdrc4-2aag_1cL9bCvM",SB_HEADERS={apikey:SUPABASE_KEY,Authorization:"Bearer "+SUPABASE_KEY,"Content-Type":"application/json"},EDGE_URL=SUPABASE_URL+"/functions/v1/directory-write",KEY="backlinkbase_sites_v1",CLIENT_ID_KEY="backlinkbase_client_id_v1",CLIENT_ID=localStorage.getItem(CLIENT_ID_KEY)||(crypto.randomUUID?crypto.randomUUID():String(Date.now())+Math.random().toString(36).slice(2));
-localStorage.setItem(CLIENT_ID_KEY,CLIENT_ID);
-const esc=s=>String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m])),seed=()=>JSON.parse(localStorage.getItem(KEY)||"[]");
-async function sb(path,opts={}){const r=await fetch(SUPABASE_URL+"/rest/v1/"+path,{...opts,headers:{...SB_HEADERS,...(opts.headers||{})}});if(!r.ok)throw new Error(await r.text());return r.status===204?null:r.json()}
-async function edge(action,payload={}){const r=await fetch(EDGE_URL,{method:"POST",headers:{apikey:SUPABASE_KEY,"Content-Type":"application/json","x-client-id":CLIENT_ID},body:JSON.stringify({action,client_id:CLIENT_ID,...payload})});let j={};try{j=await r.json()}catch{}if(!r.ok)throw Object.assign(new Error(j.error||"Request failed"),{code:j.error||"request_failed",data:j});return j}
-async function loadEngagement(items){if(!items.length)return items;try{const ids=items.map(x=>x.id).filter(Boolean);const rows=await sb("site_engagement_counts?select=site_id,vote_count,comment_count&site_id=in.("+ids.join(",")+")");const map=new Map((rows||[]).map(x=>[x.site_id,x]));return items.map(x=>({...x,vote_count:Number(map.get(x.id)?.vote_count||0),comment_count:Number(map.get(x.id)?.comment_count||0)}))}catch{return items}}
-function iconFor(s){return s.logo_url||("https://www.google.com/s2/favicons?domain="+encodeURIComponent(s.domain)+"&sz=128")}
-function slugFor(s){return s.slug||String(s.domain||s.title||s.id||"website").toLowerCase().normalize("NFKD").replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"").slice(0,80)}
-function card(s){const voted=JSON.parse(localStorage.getItem("backlinkbase_votes_v1")||"{}"),slug=slugFor(s);return '<article class="site-card"><div class="site-top"><a href="/site/'+encodeURIComponent(slug)+'/" aria-label="View '+esc(s.title||s.domain)+'"><img class="favicon" loading="lazy" src="'+esc(iconFor(s))+'" alt=""></a><div class="site-info"><div class="site-title"><a href="/site/'+encodeURIComponent(slug)+'/" style="color:inherit;text-decoration:none">'+esc(s.title||s.domain)+'</a></div><div class="site-domain">'+esc(s.domain)+'</div></div></div><p class="site-desc">'+esc(s.description||"No description available.")+'</p><span class="tag">'+esc(s.category||"Other")+'</span><div class="site-actions"><div style="display:flex;gap:7px"><button class="pagination" style="padding:7px 10px" onclick="voteSite(\''+s.id+'\')" '+(voted[s.id]?"disabled":"")+'>'+(voted[s.id]?"▲ Upvoted":"▲ Upvote "+Number(s.vote_count||0))+'</button><button class="pagination" style="padding:7px 10px" onclick="commentSite(\''+s.id+'\')">Comment '+Number(s.comment_count||0)+'</button></div><a class="visit" href="/site/'+encodeURIComponent(slug)+'/">View details →</a></div></article>'}
-async function voteSite(id){const v=JSON.parse(localStorage.getItem("backlinkbase_votes_v1")||"{}");if(v[id])return;try{await edge("vote",{site_id:id});v[id]=1;localStorage.setItem("backlinkbase_votes_v1",JSON.stringify(v));location.reload()}catch(e){alert(e.code==="vote_rate_limited"?"Vote limit reached. Please try later.":e.code==="client_blocked"?"This browser is temporarily blocked.":"Unable to vote right now.")}}
-async function commentSite(id){const text=prompt("Comment");if(!text)return;if(text.length>1000)return alert("Comment is too long.");try{await edge("comment",{site_id:id,body:text});alert("Comment submitted for review.")}catch(e){alert(e.code==="comment_blocked"?"Comment blocked by moderation rules.":e.code==="comment_rate_limited"?"Comment limit reached. Please try later.":e.code==="client_blocked"?"This browser is temporarily blocked.":"Unable to submit comment right now.")}}
-function setupMenu(){const b=document.getElementById("menuButton"),n=document.getElementById("mobileNav");if(!b||!n)return;b.onclick=()=>{const open=n.classList.toggle("open");b.setAttribute("aria-expanded",String(open));b.textContent=open?"×":"☰"}}
-async function home(){const box=document.getElementById("latest");if(!box)return;try{const rows=await sb("rpc/homepage_sites",{method:"POST",body:"{}"});const items=await loadEngagement((rows||[]).map(s=>({...s,submitted_at:new Date(s.submitted_at).getTime()})));box.innerHTML=items.length?'<div class="grid">'+items.slice(0,50).map(card).join("")+'</div>':'<div class="empty">No submitted websites yet. <a class="visit" href="/submit/">Submit the first website →</a></div>'}catch{box.innerHTML='<div class="empty">Unable to load the latest websites right now.</div>'}}
-function goSearch(){const q=document.getElementById("homeSearch")?.value.trim();location.href="/discover/"+(q?"?q="+encodeURIComponent(q):"")}
-async function discover(){const out=document.getElementById("discoverResults");if(!out)return;const p=new URLSearchParams(location.search),cat=p.get("category")||"",q=p.get("q")||"",page=Math.max(1,parseInt(p.get("page")||"1")),per=50;const qi=document.getElementById("discoverQ"),ci=document.getElementById("discoverCat");if(qi)qi.value=q;if(ci)ci.value=cat;try{const data=await sb("rpc/discover_sites",{method:"POST",body:JSON.stringify({p_category:cat,p_query:q,p_page:page,p_per_page:per})}),items=await loadEngagement((data?.items||[]).map(s=>({...s,submitted_at:new Date(s.submitted_at).getTime()}))),total=Number(data?.total||0),pages=Math.max(1,Math.ceil(total/per));out.innerHTML=items.length?'<div class="grid">'+items.map(card).join("")+'</div>':'<div class="empty">No websites found for this search/category.</div>';const pg=document.getElementById("pagination");if(pg)pg.innerHTML=(page>1?'<a class="btn secondary" href="/discover/?'+new URLSearchParams({q,category:cat,page:page-1}).toString()+'">← Prev</a>':'')+Array.from({length:Math.min(pages,8)},(_,i)=>{const n=i+1;return '<a class="btn '+(n===page?"":"secondary")+'" href="/discover/?'+new URLSearchParams({q,category:cat,page:n}).toString()+'">'+n+'</a>'}).join("")+(page<pages?'<a class="btn secondary" href="/discover/?'+new URLSearchParams({q,category:cat,page:page+1}).toString()+'">Next →</a>':'')}catch{out.innerHTML='<div class="empty">Unable to load websites right now.</div>'}}
-function applyDiscover(){const q=document.getElementById("discoverQ").value.trim(),category=document.getElementById("discoverCat").value;location.href="/discover/?"+new URLSearchParams({q,category}).toString()}
-function normalizeUrl(v){let u=v.trim();if(!/^https?:\/\//i.test(u))u="https://"+u;return new URL(u).href} function domain(u){return new URL(u).hostname.replace(/^www\./,"")}
-async function fetchMeta(){const input=document.getElementById("url"),status=document.getElementById("metaStatus"),btn=document.getElementById("fetchBtn");if(!input?.value)return;let u;try{u=normalizeUrl(input.value)}catch{status.innerHTML='<div class="notice err">Please enter a valid URL.</div>';return}btn.disabled=true;btn.innerHTML='<span class="spinner"></span> Fetching details...';try{const r=await fetch("https://api.microlink.io?url="+encodeURIComponent(u)),j=await r.json(),d=j.data||{},logo=d.logo||d.ogImage?.url||"";document.getElementById("title").value=d.title||d.ogTitle||domain(u);document.getElementById("description").value=d.description||d.ogDescription||"";document.getElementById("preview").innerHTML='<img class="favicon" src="'+esc(logo||("https://www.google.com/s2/favicons?domain="+encodeURIComponent(domain(u))+"&sz=128"))+'"><div><b>'+esc(d.title||domain(u))+'</b><div class="site-domain">'+esc(domain(u))+'</div></div>';document.getElementById("preview").classList.add("show");status.innerHTML='<div class="notice ok">Website details fetched. You can edit them before submitting.</div>';window._meta={url:u,domain:domain(u),logo_url:logo,og_title:d.ogTitle||"",og_description:d.ogDescription||"",og_image:d.ogImage?.url||""}}catch{document.getElementById("title").value=domain(u);status.innerHTML='<div class="notice err">Automatic fetch was unavailable. You can still enter the title and description manually.</div>';window._meta={url:u,domain:domain(u)}}finally{btn.disabled=false;btn.textContent="Fetch website details"}}
-async function submitForm(e){e.preventDefault();const category=document.getElementById("category").value,status=document.getElementById("submitStatus");if(!category){status.innerHTML='<div class="notice err">Please select a category.</div>';return}const btn=document.getElementById("submitBtn");btn.disabled=true;try{await edge("submit",{url:document.getElementById("url").value.trim(),category,title:document.getElementById("title").value.trim(),description:document.getElementById("description").value.trim()});status.innerHTML='<div class="notice ok">Your website was submitted successfully and is waiting for review.</div>';e.target.reset();document.getElementById("preview").classList.remove("show")}catch(err){const m={already_submitted:"This website has already been submitted.",submission_rate_limited:"Submission limit reached. Please try later.",submission_blocked:"This submission was blocked by moderation rules.",website_not_allowed:"This website is not allowed in the directory.",client_blocked:"Submissions from this browser are temporarily blocked.",invalid_category:"Please select a valid category."};status.innerHTML='<div class="notice err">'+esc(m[err.code]||"Submission could not be completed right now.")+'</div>'}finally{btn.disabled=false}}
-function initSubmit(){const c=document.getElementById("category");if(c)c.innerHTML='<option value="">Select a category</option>'+CATS.map(x=>'<option>'+esc(x)+'</option>').join("")}
-setupMenu();if(document.body.dataset.page==="home")home();if(document.body.dataset.page==="discover")discover();if(document.body.dataset.page==="submit")initSubmit();if(document.body.dataset.page==="site")sitePage();
-async function sitePage(){const box=document.getElementById("sitePage");if(!box)return;const slug=decodeURIComponent(location.pathname.replace(/^\/site\//,"").replace(/\/$/,""));if(!slug){box.innerHTML='<div class="empty">Website not found.</div>';return}try{const rows=await sb("rpc/site_by_slug",{method:"POST",body:JSON.stringify({p_slug:slug})}),s=rows&&rows.id?rows:null;if(!s){document.title="Website not found — BacklinkBase";box.innerHTML='<div class="empty"><h1>Website not found</h1><p>This website page is no longer available.</p><a class="btn secondary" href="/discover/">← Back to Discover</a></div>';return}const title=s.title||s.domain||"Website",desc=s.description||s.og_description||"Website listed on BacklinkBase.",canonical="https://backlinkbase.org/site/"+encodeURIComponent(s.slug||slug)+"/";document.title=title+" — BacklinkBase";document.getElementById("canonical").href=canonical;document.getElementById("ogTitle").content=title+" — BacklinkBase";document.getElementById("ogDescription").content=desc;if(s.og_image)document.getElementById("ogImage").content=s.og_image;box.innerHTML='<div class="form-card"><div class="site-top"><img class="favicon" src="'+esc(iconFor(s))+'" alt=""><div class="site-info"><h1 style="margin:0 0 6px">'+esc(title)+'</h1><div class="site-domain">'+esc(s.domain||"")+'</div></div></div><p class="site-desc" style="margin-top:22px">'+esc(desc)+'</p><div style="display:flex;gap:8px;flex-wrap:wrap;margin:18px 0"><span class="tag">'+esc(s.category||"Other")+'</span></div><div style="display:flex;gap:10px;flex-wrap:wrap"><a class="btn" href="'+esc(s.url)+'" target="_blank" rel="noopener nofollow">Visit website ↗</a><a class="btn secondary" href="/discover/?category='+encodeURIComponent(s.category||"")+'">More in '+esc(s.category||"this category")+'</a></div></div>'}catch{box.innerHTML='<div class="empty"><h1>Unable to load website</h1><p>Please try again later.</p><a class="btn secondary" href="/discover/">← Back to Discover</a></div>'}}
+const SUPABASE_URL="https://trjrqfpxxfadxeabvtvf.supabase.co",SUPABASE_KEY="sb_publishable_syWcZtTdkXtgcdrc4-2aag_1cL9bCvM",SB_HEADERS={apikey:SUPABASE_KEY,Authorization:"Bearer "+SUPABASE_KEY,"Content-Type":"application/json"},EDGE_URL=SUPABASE_URL+"/functions/v1/directory-write";
+
+const esc=s=>String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
+
+async function sb(path,opts={}){
+  const r=await fetch(SUPABASE_URL+"/rest/v1/"+path,{...opts,headers:{...SB_HEADERS,...(opts.headers||{})}});
+  if(!r.ok)throw new Error(await r.text());
+  return r.status===204?null:r.json();
+}
+
+async function edge(action,payload={}){
+  const r=await fetch(EDGE_URL,{
+    method:"POST",
+    headers:{apikey:SUPABASE_KEY,"Content-Type":"application/json"},
+    body:JSON.stringify({action,...payload})
+  });
+  let j={};
+  try{j=await r.json()}catch{}
+  if(!r.ok)throw Object.assign(new Error(j.error||"Request failed"),{code:j.error||"request_failed",data:j});
+  return j;
+}
+
+function iconFor(s){
+  return s.logo_url||("https://www.google.com/s2/favicons?domain="+encodeURIComponent(s.domain||"example.com")+"&sz=128");
+}
+
+function card(s){
+  const title=s.title||s.domain||"Website";
+  const desc=s.description||"Discover and explore verified tools and services on BacklinkBase.";
+  const cat=s.categories?.name||s.category_name||s.category||"General";
+  const targetUrl=s.url||("https://"+(s.domain||""));
+  
+  return `<article class="card">
+    <div class="card-head">
+      <img class="favicon" src="${esc(iconFor(s))}" alt="${esc(title)} logo" loading="lazy" width="36" height="36" onerror="this.src='https://www.google.com/s2/favicons?domain=example.com&sz=128'">
+      <div class="card-meta">
+        <h3 class="card-title">${esc(title)}</h3>
+        <span class="card-domain">${esc(s.domain||"")}</span>
+      </div>
+      <span class="badge">${esc(cat)}</span>
+    </div>
+    <p class="card-desc">${esc(desc)}</p>
+    <div class="card-foot">
+      <a class="visit-btn" href="${esc(targetUrl)}" target="_blank" rel="noopener noreferrer nofollow">
+        Visit Website
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+      </a>
+    </div>
+  </article>`;
+}
+
+function setupMenu(){
+  const b=document.getElementById("menuButton"),n=document.getElementById("mobileNav");
+  if(b&&n){
+    b.onclick=()=>n.classList.toggle("open");
+  }
+}
+
+async function home(){
+  const box=document.getElementById("latest");
+  if(!box)return;
+  box.innerHTML='<div class="loading-state"><span class="spinner"></span> Loading top featured websites...</div>';
+  try{
+    const rows=await sb("sites?select=id,title,description,domain,url,logo_url,created_at,categories(name)&status=eq.approved&order=created_at.desc&limit=18");
+    if(!rows||!rows.length){
+      box.innerHTML='<div class="empty">No websites listed yet. Be the first to <a href="/submit/">submit yours</a>!</div>';
+      return;
+    }
+    box.innerHTML=rows.map(card).join("");
+  }catch(e){
+    console.error(e);
+    box.innerHTML='<div class="empty">Unable to load websites right now. Please try again later.</div>';
+  }
+}
+
+function goSearch(){
+  const q=document.getElementById("homeSearch")?.value.trim();
+  location.href="/discover/"+(q?("?q="+encodeURIComponent(q)):"");
+}
+
+let discoverPage=0;
+const DISCOVER_LIMIT=24;
+
+async function discover(){
+  const params=new URLSearchParams(location.search);
+  const q=params.get("q")||"";
+  const c=params.get("c")||"";
+  const searchInput=document.getElementById("discoverSearch");
+  if(searchInput&&q)searchInput.value=q;
+  
+  await applyDiscover(q,c,0);
+}
+
+async function applyDiscover(q,cat,page=0){
+  const box=document.getElementById("discoverGrid");
+  const countBox=document.getElementById("resultsCount");
+  if(!box)return;
+  box.innerHTML='<div class="loading-state"><span class="spinner"></span> Discovering curated websites...</div>';
+  
+  try{
+    let path=`sites?select=id,title,description,domain,url,logo_url,created_at,categories(name)&status=eq.approved&order=created_at.desc&limit=${DISCOVER_LIMIT}&offset=${page*DISCOVER_LIMIT}`;
+    if(cat){
+      path+=`&categories.name=eq.${encodeURIComponent(cat)}`;
+    }
+    if(q){
+      path+=`&or=(title.ilike.*${encodeURIComponent(q)}*,description.ilike.*${encodeURIComponent(q)}*,domain.ilike.*${encodeURIComponent(q)}*)`;
+    }
+    
+    const rows=await sb(path);
+    if(!rows||!rows.length){
+      box.innerHTML='<div class="empty">No matching websites found. <a href="/submit/">Submit a website</a></div>';
+      if(countBox)countBox.textContent="0 websites found";
+      return;
+    }
+    
+    if(countBox)countBox.textContent=`Showing ${rows.length} verified websites`;
+    box.innerHTML=rows.map(card).join("");
+  }catch(e){
+    console.error(e);
+    box.innerHTML='<div class="empty">Error loading directory results.</div>';
+  }
+}
+
+function normalizeUrl(u){
+  let s=String(u||"").trim();
+  if(!/^https?:\/\//i.test(s))s="https://"+s;
+  const o=new URL(s);
+  return o.origin;
+}
+
+function domain(u){
+  try{
+    return new URL(normalizeUrl(u)).hostname.replace(/^www\./,"");
+  }catch{
+    return "";
+  }
+}
+
+// User triggers fetch manually via button
+async function fetchMeta(){
+  const input=document.getElementById("url");
+  const status=document.getElementById("metaStatus");
+  const btn=document.getElementById("fetchBtn");
+  if(!input?.value.trim()){
+    if(status)status.innerHTML='<div class="notice err">Please enter a website URL first.</div>';
+    return;
+  }
+  
+  let u;
+  try{
+    u=normalizeUrl(input.value);
+  }catch{
+    if(status)status.innerHTML='<div class="notice err">Please enter a valid website URL.</div>';
+    return;
+  }
+  
+  const d=domain(u);
+  if(btn){
+    btn.disabled=true;
+    btn.innerHTML='<span class="spinner"></span> Fetching details...';
+  }
+  if(status)status.innerHTML='<div class="notice info"><span class="spinner"></span> Connecting to website metadata provider...</div>';
+  
+  try{
+    const r=await fetch("https://api.microlink.io?url="+encodeURIComponent(u));
+    const j=await r.json();
+    const data=j.data||{};
+    const titleVal=data.title||data.ogTitle||d;
+    const descVal=data.description||data.ogDescription||"";
+    const logoVal=data.logo?.url||data.image?.url||("https://www.google.com/s2/favicons?domain="+encodeURIComponent(d)+"&sz=128");
+    
+    if(document.getElementById("title"))document.getElementById("title").value=titleVal;
+    if(document.getElementById("description"))document.getElementById("description").value=descVal;
+    
+    const preview=document.getElementById("preview");
+    if(preview){
+      preview.innerHTML=`<img class="favicon" src="${esc(logoVal)}" alt="Logo" width="40" height="40"><div><b>${esc(titleVal)}</b><div class="site-domain">${esc(d)}</div></div>`;
+      preview.classList.add("show");
+    }
+    
+    window._meta={url:u,domain:d,logo_url:logoVal};
+    if(status)status.innerHTML='<div class="notice ok">Website details loaded! You can refine the title and description below before submitting.</div>';
+  }catch(e){
+    if(document.getElementById("title"))document.getElementById("title").value=d;
+    window._meta={url:u,domain:d,logo_url:"https://www.google.com/s2/favicons?domain="+encodeURIComponent(d)+"&sz=128"};
+    if(status)status.innerHTML='<div class="notice info">Basic domain details identified. Please complete the title and description manually.</div>';
+  }finally{
+    if(btn){
+      btn.disabled=false;
+      btn.innerHTML='Fetch Website Details';
+    }
+  }
+}
+
+async function submitForm(ev){
+  ev.preventDefault();
+  const status=document.getElementById("submitStatus");
+  const btn=document.getElementById("submitBtn");
+  const urlVal=document.getElementById("url").value.trim();
+  const titleVal=document.getElementById("title").value.trim();
+  const descVal=document.getElementById("description").value.trim();
+  const catVal=document.getElementById("category").value;
+  
+  if(!urlVal||!titleVal){
+    status.innerHTML='<div class="notice err">Please enter both URL and Title.</div>';
+    return;
+  }
+  
+  btn.disabled=true;
+  btn.innerHTML='<span class="spinner"></span> Submitting to directory...';
+  status.innerHTML='';
+  
+  try{
+    const u=normalizeUrl(urlVal);
+    const d=domain(u);
+    const logo=window._meta?.logo_url||("https://www.google.com/s2/favicons?domain="+encodeURIComponent(d)+"&sz=128");
+    
+    const res=await edge("submit",{
+      url:u,
+      title:titleVal,
+      description:descVal,
+      category_id:catVal||null,
+      logo_url:logo
+    });
+    
+    status.innerHTML='<div class="notice ok">🎉 Website successfully submitted for review! Our editorial team will inspect and approve your listing shortly.</div>';
+    document.getElementById("submitForm").reset();
+    const preview=document.getElementById("preview");
+    if(preview)preview.classList.remove("show");
+    window._meta=null;
+  }catch(e){
+    status.innerHTML=`<div class="notice err">${esc(e.message||"Submission failed. Please check your data and try again.")}</div>`;
+  }finally{
+    btn.disabled=false;
+    btn.innerHTML='Submit Website for Review';
+  }
+}
+
+async function initSubmit(){
+  const sel=document.getElementById("category");
+  if(sel){
+    try{
+      const cats=await sb("categories?select=id,name&order=name.asc");
+      if(cats&&cats.length){
+        sel.innerHTML='<option value="">Select Category (Optional)</option>'+cats.map(c=>`<option value="${esc(c.id)}">${esc(c.name)}</option>`).join("");
+      }
+    }catch{}
+  }
+  
+  const form=document.getElementById("submitForm");
+  if(form)form.onsubmit=submitForm;
+  
+  const fetchBtn=document.getElementById("fetchBtn");
+  if(fetchBtn)fetchBtn.onclick=fetchMeta;
+}
+
+document.addEventListener("DOMContentLoaded",()=>{
+  setupMenu();
+  if(document.getElementById("latest"))home();
+  if(document.getElementById("discoverGrid"))discover();
+  if(document.getElementById("submitForm"))initSubmit();
+});

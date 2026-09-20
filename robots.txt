@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /admin/
 
-Sitemap: https://iftechstudio2.github.io/backlinkbase1/sitemap.xml
+Sitemap: https://backlinkbase.org/sitemap.xml
