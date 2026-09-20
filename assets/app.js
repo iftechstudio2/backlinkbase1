@@ -1,3 +1,48 @@
+// Social share & badge copy helpers
+window.copyShare = function(url, btn) {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(url).then(function() {
+      btn.classList.add("copied");
+      var oldTitle = btn.getAttribute("title");
+      btn.setAttribute("title", "Copied to clipboard!");
+      setTimeout(function() {
+        btn.classList.remove("copied");
+        btn.setAttribute("title", oldTitle);
+      }, 2000);
+    }).catch(function() {
+      prompt("Copy listing link:", url);
+    });
+  } else {
+    prompt("Copy listing link:", url);
+  }
+};
+
+window.copyBadgeCode = function() {
+  var snippet = document.getElementById("badgeSnippet");
+  var notice = document.getElementById("badgeCopyNotice");
+  var btn = document.getElementById("copyBadgeBtn");
+  if (!snippet) return;
+  snippet.select();
+  snippet.setSelectionRange(0, 99999);
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(snippet.value).then(function() {
+      if (notice) {
+        notice.style.display = "inline-block";
+        setTimeout(function() { notice.style.display = "none"; }, 3000);
+      }
+      if (btn) {
+        btn.textContent = "Copied!";
+        setTimeout(function() { btn.textContent = "Copy Badge Code"; }, 3000);
+      }
+    }).catch(function() {
+      document.execCommand("copy");
+    });
+  } else {
+    document.execCommand("copy");
+    if (notice) notice.style.display = "inline-block";
+  }
+};
+
 const CATS=["AI","Artificial Intelligence","Technology","Software","SaaS","Web Tools","Developer Tools","Programming","Design","Graphics","Marketing","SEO","Business","Finance","E-commerce","Shopping","Education","Learning","News","Media","Entertainment","Games","Gaming","Health","Fitness","Travel","Food","Recipes","Lifestyle","Personal Blogs","Photography","Video","Music","Sports","Jobs","Careers","Real Estate","Construction","Home Improvement","Automotive","Legal","Government","Nonprofit","Communities","Forums","Social","Productivity","Utilities","Internet Services","Hosting","Domains","Security","Cybersecurity","Mobile Apps","Android","iOS","WordPress","Blogging","Newsletters","Online Services","Directories","Reference","Science","Research","Books","Literature","Art","Fashion","Beauty","Parenting","Pets","Shopping Deals","Local Businesses","Startups","Agencies","Freelancers","Portfolios","Other"];
 const SUPABASE_URL="https://trjrqfpxxfadxeabvtvf.supabase.co",SUPABASE_KEY="sb_publishable_syWcZtTdkXtgcdrc4-2aag_1cL9bCvM",SB_HEADERS={apikey:SUPABASE_KEY,Authorization:"Bearer "+SUPABASE_KEY,"Content-Type":"application/json"},EDGE_URL=SUPABASE_URL+"/functions/v1/directory-write";
 
@@ -103,6 +148,16 @@ function card(s){
   const desc=s.description||"Discover and explore verified tools and services on BacklinkBase.";
   const cat=s.categories?.name||s.category_name||s.category||"General";
   const targetUrl=s.url||("https://"+(s.domain||""));
+  const shareDomain=s.domain||(s.url?s.url.replace(/^https?:\/\//i,"").split("/")[0]:"");
+  const shareUrl="https://backlinkbase.org/discover/?q="+encodeURIComponent(shareDomain);
+  const shareText="Check out "+title+" on BacklinkBase Directory: "+shareUrl;
+  const encText=encodeURIComponent(shareText);
+  const encUrl=encodeURIComponent(shareUrl);
+
+  const xUrl="https://twitter.com/intent/tweet?text="+encText;
+  const liUrl="https://www.linkedin.com/sharing/share-offsite/?url="+encUrl;
+  const waUrl="https://api.whatsapp.com/send?text="+encText;
+  const fbUrl="https://www.facebook.com/sharer/sharer.php?u="+encUrl;
   
   return '<article class="card">' +
     '<div class="card-head">' +
@@ -115,6 +170,26 @@ function card(s){
     '</div>' +
     '<p class="card-desc">' + esc(desc) + '</p>' +
     '<div class="card-foot">' +
+      '<div class="card-share">' +
+        '<span class="share-lbl">Share:</span>' +
+        '<div class="share-icons">' +
+          '<a class="share-btn x" href="' + esc(xUrl) + '" target="_blank" rel="noopener noreferrer" title="Share on X (Twitter)" aria-label="Share on X">' +
+            '<svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>' +
+          '</a>' +
+          '<a class="share-btn li" href="' + esc(liUrl) + '" target="_blank" rel="noopener noreferrer" title="Share on LinkedIn" aria-label="Share on LinkedIn">' +
+            '<svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg>' +
+          '</a>' +
+          '<a class="share-btn wa" href="' + esc(waUrl) + '" target="_blank" rel="noopener noreferrer" title="Share on WhatsApp" aria-label="Share on WhatsApp">' +
+            '<svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2m.01 1.67c4.54 0 8.24 3.7 8.24 8.24 0 2.2-.86 4.28-2.42 5.84a8.17 8.17 0 0 1-5.82 2.41h-.01c-1.46 0-2.9-.39-4.16-1.14l-.3-.18-3.1 1.02.83-3.02-.19-.31a8.188 8.188 0 0 1-1.25-4.38c0-4.54 3.7-8.24 8.24-8.24m4.8 11.66c-.26-.13-1.54-.76-1.78-.85-.24-.09-.41-.13-.59.13-.17.26-.68.85-.83 1.02-.15.17-.3.2-.56.07-.26-.13-1.1-.4-2.09-1.29-.77-.69-1.29-1.54-1.44-1.8-.15-.26-.02-.4.11-.53.12-.12.26-.3.39-.45.13-.15.17-.26.26-.43.09-.17.04-.32-.02-.45-.06-.13-.59-1.42-.81-1.95-.21-.51-.43-.44-.59-.45h-.5c-.17 0-.45.06-.69.32-.24.26-.91.89-.91 2.17 0 1.28.93 2.52 1.06 2.7.13.17 1.83 2.8 4.44 3.93.62.27 1.11.43 1.49.55.63.2 1.2.17 1.65.1.5-.07 1.54-.63 1.76-1.24.21-.61.21-1.13.15-1.24-.06-.11-.23-.17-.49-.3z"/></svg>' +
+          '</a>' +
+          '<a class="share-btn fb" href="' + esc(fbUrl) + '" target="_blank" rel="noopener noreferrer" title="Share on Facebook" aria-label="Share on Facebook">' +
+            '<svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor"><path d="M12 2.04C6.5 2.04 2 6.53 2 12.06C2 17.06 5.66 21.21 10.44 21.96V14.96H7.9V12.06H10.44V9.85C10.44 7.34 11.93 5.96 14.22 5.96C15.31 5.96 16.45 6.15 16.45 6.15V8.62H15.19C13.95 8.62 13.56 9.39 13.56 10.18V12.06H16.34L15.89 14.96H13.56V21.96A10 10 0 0 0 22 12.06C22 6.53 17.5 2.04 12 2.04Z"/></svg>' +
+          '</a>' +
+          '<button type="button" class="share-btn cp" onclick="copyShare(\'' + esc(shareUrl) + '\', this)" title="Copy listing link" aria-label="Copy listing link">' +
+            '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path></svg>' +
+          '</button>' +
+        '</div>' +
+      '</div>' +
       '<a class="visit-btn" href="' + esc(targetUrl) + '" target="_blank" rel="noopener noreferrer nofollow">' +
         'Visit Website ' +
         '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>' +
@@ -296,8 +371,8 @@ async function submitForm(ev){
   const descVal=document.getElementById("description").value.trim();
   const catVal=document.getElementById("category").value;
   
-  if(!urlVal||!titleVal){
-    status.innerHTML='<div class="notice err">Please enter both URL and Title.</div>';
+  if(!urlVal||!titleVal||!catVal){
+    status.innerHTML='<div class="notice err">Please fill in all required fields: URL, Title, and Category.</div>';
     return;
   }
   
@@ -337,7 +412,7 @@ async function initSubmit(){
     try{
       const cats=await sb("categories?select=id,name&order=name.asc");
       if(cats&&cats.length){
-        sel.innerHTML='<option value="">Select Category (Optional)</option>'+cats.map(c=>`<option value="${esc(c.id)}">${esc(c.name)}</option>`).join("");
+        sel.innerHTML='<option value="">Select a Category (Required)</option>'+cats.map(c=>`<option value="${esc(c.id)}">${esc(c.name)}</option>`).join("");
       }
     }catch{}
   }

@@ -11,7 +11,7 @@
   <meta property="og:url" content="https://backlinkbase.org/submit/">
   <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary_large_image">
-  <link rel="stylesheet" href="/assets/style.css?v=3.3">
+  <link rel="stylesheet" href="/assets/style.css?v=3.4">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -84,16 +84,82 @@
         </div>
 
         <div class="field">
-          <label for="category">Category</label>
-          <select id="category">
-            <option value="">Loading categories...</option>
+          <label for="category">Category <span class="req">*</span></label>
+          <select id="category" required>
+            <option value="">Select a Category (Required)</option>
           </select>
+          <span class="hint">Selecting an accurate category is required for directory organization and review.</span>
         </div>
 
         <div class="form-actions" style="margin-top:24px;">
           <button type="submit" id="submitBtn" class="btn primary full">Submit Website for Review</button>
         </div>
       </form>
+    </div>
+
+
+    <!-- Optional: Support BacklinkBase Section -->
+    <div class="support-card">
+      <div class="support-badge-pill">Optional</div>
+      <div class="support-header">
+        <h3>Support BacklinkBase &amp; Boost Listing Authority</h3>
+        <p>Help us keep this directory free, curated, and open for creators, SaaS founders, and developers worldwide. Placing a verified directory badge on your site or giving us a shout-out is <strong>100% optional</strong> and does not affect listing approval.</p>
+      </div>
+
+      <div class="support-options">
+        <div class="support-item">
+          <div class="support-item-head">
+            <span class="support-icon">🔗</span>
+            <div>
+              <h4>Add BacklinkBase Badge on Your Website</h4>
+              <p>Place this clean badge in your website footer, documentation, or partners page to show visitors and crawlers your verified directory profile.</p>
+            </div>
+          </div>
+
+          <div class="badge-preview-box">
+            <span class="preview-label">Live Badge Preview:</span>
+            <div class="badge-demo">
+              <a href="https://backlinkbase.org" target="_blank" rel="noopener" class="backlink-badge-preview">
+                <span class="badge-dot">●</span> Featured on <strong>BacklinkBase</strong>
+              </a>
+            </div>
+          </div>
+
+          <div class="snippet-box">
+            <label for="badgeSnippet">Copy HTML Embed Code:</label>
+            <div class="snippet-input-group">
+              <textarea id="badgeSnippet" readonly rows="2">&lt;a href="https://backlinkbase.org" target="_blank" rel="noopener" style="display:inline-flex;align-items:center;gap:6px;padding:6px 12px;background:#09090b;color:#fff;border:1px solid #27272a;border-radius:6px;text-decoration:none;font-size:12px;font-family:sans-serif;font-weight:600;"&gt;&lt;span style="color:#10b981;"&gt;●&lt;/span&gt; Featured on BacklinkBase&lt;/a&gt;</textarea>
+              <button type="button" class="btn secondary btn-sm" id="copyBadgeBtn" onclick="copyBadgeCode()">Copy Badge Code</button>
+            </div>
+            <span id="badgeCopyNotice" class="copy-notice" style="display:none;">✓ Badge code copied to clipboard!</span>
+          </div>
+        </div>
+
+        <div class="support-item">
+          <div class="support-item-head">
+            <span class="support-icon">📣</span>
+            <div>
+              <h4>Share on Social Media</h4>
+              <p>Let your followers know your project is indexed on BacklinkBase and help other founders discover the directory.</p>
+            </div>
+          </div>
+
+          <div class="support-social-actions">
+            <a href="https://twitter.com/intent/tweet?text=I%20just%20submitted%20my%20website%20to%20%40BacklinkBase%20Directory!%20Discover%20curated%20web%20tools%20and%20submit%20your%20site%20at%20https%3A%2F%2Fbacklinkbase.org" target="_blank" rel="noopener noreferrer" class="btn secondary btn-sm share-btn-link">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+              Share on X
+            </a>
+            <a href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fbacklinkbase.org" target="_blank" rel="noopener noreferrer" class="btn secondary btn-sm share-btn-link">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M19 3a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h14m-.5 15.5v-5.3a3.26 3.26 0 0 0-3.26-3.26c-.85 0-1.84.52-2.28 1.3v-1.11h-2.79v8.37h2.79v-4.93c0-.77.62-1.4 1.39-1.4a1.4 1.4 0 0 1 1.4 1.4v4.93h2.75M6.88 8.56a1.68 1.68 0 0 0 1.68-1.68c0-.93-.75-1.69-1.68-1.69a1.69 1.69 0 0 0-1.69 1.69c0 .93.76 1.68 1.69 1.68m1.39 9.94v-8.37H5.5v8.37h2.77z"/></svg>
+              Share on LinkedIn
+            </a>
+            <a href="https://api.whatsapp.com/send?text=Discover%20useful%20websites%20and%20submit%20your%20own%20on%20BacklinkBase%20Directory%3A%20https%3A%2F%2Fbacklinkbase.org" target="_blank" rel="noopener noreferrer" class="btn secondary btn-sm share-btn-link">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M12.04 2c-5.46 0-9.91 4.45-9.91 9.91 0 1.75.46 3.45 1.32 4.95L2.05 22l5.25-1.38c1.45.79 3.08 1.21 4.74 1.21 5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.816 9.816 0 0 0 12.04 2m.01 1.67c4.54 0 8.24 3.7 8.24 8.24 0 2.2-.86 4.28-2.42 5.84a8.17 8.17 0 0 1-5.82 2.41h-.01c-1.46 0-2.9-.39-4.16-1.14l-.3-.18-3.1 1.02.83-3.02-.19-.31a8.188 8.188 0 0 1-1.25-4.38c0-4.54 3.7-8.24 8.24-8.24m4.8 11.66c-.26-.13-1.54-.76-1.78-.85-.24-.09-.41-.13-.59.13-.17.26-.68.85-.83 1.02-.15.17-.3.2-.56.07-.26-.13-1.1-.4-2.09-1.29-.77-.69-1.29-1.54-1.44-1.8-.15-.26-.02-.4.11-.53.12-.12.26-.3.39-.45.13-.15.17-.26.26-.43.09-.17.04-.32-.02-.45-.06-.13-.59-1.42-.81-1.95-.21-.51-.43-.44-.59-.45h-.5c-.17 0-.45.06-.69.32-.24.26-.91.89-.91 2.17 0 1.28.93 2.52 1.06 2.7.13.17 1.83 2.8 4.44 3.93.62.27 1.11.43 1.49.55.63.2 1.2.17 1.65.1.5-.07 1.54-.63 1.76-1.24.21-.61.21-1.13.15-1.24-.06-.11-.23-.17-.49-.3z"/></svg>
+              Share on WhatsApp
+            </a>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Submission FAQ Section -->
@@ -159,6 +225,6 @@
     </div>
   </footer>
 
-  <script src="/assets/app.js?v=3.3"></script>
+  <script src="/assets/app.js?v=3.4"></script>
 </body>
 </html>

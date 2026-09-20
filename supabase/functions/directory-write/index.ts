@@ -21,9 +21,9 @@ serve(async (req) => {
     const { action, url, title, description, category_id, logo_url } = body;
 
     if (action === "submit") {
-      if (!url || !title) {
+      if (!url || !title || !category_id) {
         return new Response(
-          JSON.stringify({ error: "URL and title are required" }),
+          JSON.stringify({ error: "URL, title, and category are required" }),
           { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
@@ -66,7 +66,7 @@ serve(async (req) => {
           category_id: category_id || null,
           logo_url: finalLogo,
           status: "pending",
-          created_at: new Date().toISOString()
+          submitted_at: new Date().toISOString()
         })
         .select()
         .single();
