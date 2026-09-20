@@ -170,11 +170,20 @@ header, .top {
 
 .mobile-nav {
   display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  width: 100%;
   flex-direction: column;
   padding: 16px 20px 24px;
   background: var(--bg-subtle);
   border-bottom: 1px solid var(--line);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
   gap: 10px;
+  z-index: 999;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }
 .mobile-nav.open {
   display: flex !important;

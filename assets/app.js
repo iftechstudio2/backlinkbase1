@@ -40,29 +40,37 @@ function updateThemeBtns(text){
 
 // Mobile Menu Logic
 function setupMenu(){
-  const btn = document.getElementById("menuButton");
-  const nav = document.getElementById("mobileNav");
+  const btn = document.getElementById(menuButton);
+  const nav = document.getElementById(mobileNav);
   if(!btn || !nav) return;
+
+  const closeMenu = () => {
+    if(nav.classList.contains(open)){
+      nav.classList.remove(open);
+      btn.setAttribute(aria-expanded, false);
+    }
+  };
 
   btn.onclick = (e) => {
     e.stopPropagation();
-    const isOpen = nav.classList.toggle("open");
-    btn.setAttribute("aria-expanded", isOpen ? "true" : "false");
+    const isOpen = nav.classList.toggle(open);
+    btn.setAttribute(aria-expanded, isOpen ? true : false);
   };
 
-  document.addEventListener("click", (e) => {
+  document.addEventListener(click, (e) => {
     if(!nav.contains(e.target) && e.target !== btn && !btn.contains(e.target)){
-      nav.classList.remove("open");
-      btn.setAttribute("aria-expanded", "false");
+      closeMenu();
     }
   });
 
-  nav.querySelectorAll("a").forEach(a => {
-    a.addEventListener("click", () => {
-      nav.classList.remove("open");
-      btn.setAttribute("aria-expanded", "false");
-    });
+  nav.querySelectorAll(a).forEach(a => {
+    a.addEventListener(click, closeMenu);
   });
+
+  // Auto close menu when user scrolls the page
+  window.addEventListener(scroll, () => {
+    closeMenu();
+  }, { passive: true });
 }
 
 async function sb(path,opts={}){
