@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://iftechstudio2.github.io/backlinkbase1/</loc>
-    <changefreq>daily</changefreq>
-    <priority>1.0</priority>
-  </url>
+  <url><loc>https://backlinkbase.org/</loc></url>
+  <url><loc>https://backlinkbase.org/discover/</loc></url>
+  <url><loc>https://backlinkbase.org/categories/</loc></url>
+  <url><loc>https://backlinkbase.org/submit/</loc></url>
+  <url><loc>https://backlinkbase.org/about/</loc></url>
+  <url><loc>https://backlinkbase.org/guidelines/</loc></url>
+  <url><loc>https://backlinkbase.org/contact/</loc></url>
+  <url><loc>https://backlinkbase.org/privacy/</loc></url>
+  <url><loc>https://backlinkbase.org/terms/</loc></url>
+  <url><loc>https://backlinkbase.org/disclaimer/</loc></url>
 </urlset>
