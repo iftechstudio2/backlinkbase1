@@ -11,7 +11,7 @@
   <meta property="og:url" content="https://backlinkbase.org/submit/">
   <meta property="og:type" content="website">
   <meta name="twitter:card" content="summary_large_image">
-  <link rel="stylesheet" href="/assets/style.css?v=3.0">
+  <link rel="stylesheet" href="/assets/style.css?v=3.1">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -23,10 +23,10 @@
   </script>
 </head>
 <body>
-  <header class="top">
+    <header class="top">
     <div class="wrap topin">
       <a class="brand" href="/">Backlink<span>Base</span></a>
-      <nav class="nav">
+      <nav class="nav desktop-nav">
         <a href="/discover/">Discover</a>
         <a href="/categories/">Categories</a>
         <a href="/guidelines/">Guidelines</a>
@@ -34,12 +34,14 @@
         <button type="button" class="theme-btn themeToggleBtn" aria-label="Toggle theme">☀️ Light</button>
         <a class="btn primary" href="/submit/">+ Submit Site</a>
       </nav>
-      <button class="nav-toggle" id="menuButton" aria-label="Toggle navigation" aria-expanded="false">
-        <svg viewBox="0 0 24 24" fill="none"><path d="M4 6h16M4 12h16M4 18h16"></path></svg>
-      </button>
+      <div class="mobile-actions">
+        <button type="button" class="theme-btn themeToggleBtn mobile-theme-btn" aria-label="Toggle theme">☀️ Light</button>
+        <button class="nav-toggle" id="menuButton" aria-label="Toggle navigation" aria-expanded="false">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"></path></svg>
+        </button>
+      </div>
     </div>
     <div class="mobile-nav" id="mobileNav">
-      <button type="button" class="theme-btn themeToggleBtn" style="width:100%;margin-bottom:6px" aria-label="Toggle theme">☀️ Light</button>
       <a href="/discover/">Discover</a>
       <a href="/categories/">Categories</a>
       <a href="/guidelines/">Guidelines</a>
@@ -157,6 +159,6 @@
     </div>
   </footer>
 
-  <script src="/assets/app.js?v=3.0"></script>
+  <script src="/assets/app.js?v=3.1"></script>
 </body>
 </html>

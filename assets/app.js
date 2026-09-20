@@ -28,7 +28,14 @@ function setTheme(theme){
 }
 
 function updateThemeBtns(text){
-  document.querySelectorAll(".themeToggleBtn").forEach(b => b.innerHTML = text);
+  const isLight = text.includes("Light");
+  document.querySelectorAll(".themeToggleBtn").forEach(b => {
+    if(b.classList.contains("mobile-theme-btn")){
+      b.innerHTML = isLight ? "☀️ Light" : "🌙 Dark";
+    } else {
+      b.innerHTML = text;
+    }
+  });
 }
 
 // Mobile Menu Logic
