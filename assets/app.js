@@ -531,3 +531,135 @@ document.addEventListener("DOMContentLoaded",()=>{
   if(document.getElementById("discoverGrid") || document.getElementById("discoverResults"))discover();
   if(document.getElementById("submitForm"))initSubmit();
 });
+
+
+// Promo & OTP Management
+window._promoProof = null;
+window._challengeToken = null;
+
+window.togglePromoSection = function(show) {
+  const sec = document.getElementById("promoDetailsSection");
+  if (!sec) return;
+  sec.style.display = show ? "block" : "none";
+  if (show) {
+    updateDomainSuffix();
+  }
+};
+
+function updateDomainSuffix() {
+  const urlInput = document.getElementById("url");
+  const suffix = document.getElementById("domainSuffix");
+  if (!suffix) return;
+  let d = "yourdomain.com";
+  if (urlInput && urlInput.value.trim()) {
+    try {
+      d = domain(normalizeUrl(urlInput.value));
+    } catch(e) {}
+  }
+  suffix.textContent = "@" + d;
+}
+
+const origFetchMeta = window.fetchMeta;
+if (document.getElementById("url")) {
+  document.getElementById("url").addEventListener("input", updateDomainSuffix);
+}
+
+window.handleSendOtp = async function() {
+  const btn = document.getElementById("sendOtpBtn");
+  const status = document.getElementById("otpStatus");
+  const user = (document.getElementById("emailUser")?.value || "").trim();
+  const urlInput = document.getElementById("url")?.value.trim();
+
+  if (!urlInput) {
+    status.innerHTML = "<div class="notice err">Please enter your website URL at the top first.</div>";
+    return;
+  }
+  if (!user) {
+    status.innerHTML = "<div class="notice err">Please enter the username for your domain email (e.g. contact, info).</div>";
+    return;
+  }
+
+  let d;
+  try {
+    d = domain(normalizeUrl(urlInput));
+  } catch(e) {
+    status.innerHTML = "<div class="notice err">Please enter a valid website URL.</div>";
+    return;
+  }
+
+  const fullEmail = user + "@" + d;
+  btn.disabled = true;
+  btn.textContent = "Sending...";
+  status.innerHTML = "<div class="notice info"><span class="spinner"></span> Sending verification code to " + esc(fullEmail) + "...</div>";
+
+  try {
+    const res = await fetch(API_BASE + "/send-otp", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: fullEmail, domain: d })
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data.error || "Failed to send verification email");
+    }
+    window._challengeToken = data.challengeToken;
+    status.innerHTML = "<div class="notice ok">Code sent to " + esc(fullEmail) + "! Check your inbox/spam (valid for 10 min).</div>";
+    document.getElementById("otpInputRow").style.display = "block";
+  } catch(err) {
+    status.innerHTML = "<div class="notice err">" + esc(err.message) + "</div>";
+  } finally {
+    btn.disabled = false;
+    btn.textContent = "Send Code";
+  }
+};
+
+window.handleVerifyOtp = async function() {
+  const btn = document.getElementById("verifyOtpBtn");
+  const status = document.getElementById("verifyStatus");
+  const code = (document.getElementById("otpCode")?.value || "").trim();
+  const user = (document.getElementById("emailUser")?.value || "").trim();
+  const urlInput = document.getElementById("url")?.value.trim();
+
+  if (!code || code.length !== 6) {
+    status.innerHTML = "<div class="notice err">Please enter the complete 6-digit code.</div>";
+    return;
+  }
+  if (!window._challengeToken) {
+    status.innerHTML = "<div class="notice err">Please request a verification code first.</div>";
+    return;
+  }
+
+  const d = domain(normalizeUrl(urlInput));
+  const fullEmail = user + "@" + d;
+
+  btn.disabled = true;
+  btn.textContent = "Verifying...";
+
+  try {
+    const res = await fetch(API_BASE + "/verify-otp", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        challengeToken: window._challengeToken,
+        code: code,
+        domain: d,
+        email: fullEmail
+      })
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      throw new Error(data.error || "Verification failed");
+    }
+    window._promoProof = data.proofToken;
+    status.innerHTML = "<div class="notice ok" style="font-weight:bold;">✓ Domain verified successfully! Your exclusive deal is verified.</div>";
+    btn.disabled = true;
+    btn.textContent = "Verified ✓";
+    document.getElementById("otpCode").disabled = true;
+    document.getElementById("emailUser").disabled = true;
+    document.getElementById("sendOtpBtn").disabled = true;
+  } catch(err) {
+    status.innerHTML = "<div class="notice err">" + esc(err.message) + "</div>";
+    btn.disabled = false;
+    btn.textContent = "Verify Code";
+  }
+};
