@@ -9,20 +9,32 @@
   <link rel="stylesheet" href="/assets/style.css?v=3.5">
 </head>
 <body>
-  <header class="header">
-    <div class="header-inner">
-      <a href="/" class="brand">BacklinkBase</a>
-      <nav class="desktop-nav">
+  <header class="top">
+    <div class="wrap topin">
+      <a class="brand" href="/">Backlink<span>Base</span></a>
+      <nav class="nav desktop-nav">
         <a href="/discover/">Discover</a>
-        <a href="/deals/" class="active" style="color:var(--text);font-weight:700;">Deals 🔥</a>
-        <a href="/blog/">Blog</a>
+        <a href="/deals/">Deals</a>
+        <a href="/categories/">Categories</a>
         <a href="/guidelines/">Guidelines</a>
-        <a href="/submit/" class="btn-primary" style="padding:6px 14px;border-radius:8px;">Submit Site</a>
+        <a href="/blog/">Blog</a>
+        <button type="button" class="theme-btn themeToggleBtn" aria-label="Toggle theme">☀️ Light</button>
+        <a class="btn primary" href="/submit/">+ Submit Site</a>
       </nav>
-      <div class="header-right">
-        <button id="themeToggle" class="icon-btn" aria-label="Toggle theme">🌓</button>
-        <button id="menuToggle" class="icon-btn mobile-menu-btn" aria-label="Open menu">☰</button>
+      <div class="mobile-actions">
+        <button type="button" class="theme-btn themeToggleBtn mobile-theme-btn" aria-label="Toggle theme">☀️ Light</button>
+        <button class="nav-toggle" id="menuButton" aria-label="Toggle navigation" aria-expanded="false">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"></path></svg>
+        </button>
       </div>
+    </div>
+    <div class="mobile-nav" id="mobileNav">
+      <a href="/discover/">Discover</a>
+        <a href="/deals/">Deals</a>
+      <a href="/categories/">Categories</a>
+      <a href="/guidelines/">Guidelines</a>
+      <a href="/blog/">Blog</a>
+      <a class="btn primary" href="/submit/" style="text-align:center;margin-top:6px">+ Submit Site</a>
     </div>
   </header>
 
@@ -66,20 +78,33 @@
     </div>
   </main>
 
-  <footer class="footer">
-    <div class="footer-inner" style="max-width:1100px;margin:0 auto;display:flex;flex-wrap:wrap;justify-content:space-between;gap:20px;padding:40px 20px 20px;">
-      <div>
-        <b>BacklinkBase</b>
-        <p style="font-size:13px;color:var(--text-muted);margin-top:6px;">High-quality web directory and discovery platform.</p>
+  <footer class="foot">
+    <div class="wrap footin">
+      <div class="foot-col">
+        <div class="brand">Backlink<span>Base</span></div>
+        <p class="foot-about">The curated index for discovering quality web tools, SaaS, developer utilities, and high-impact digital resources.</p>
       </div>
-      <div style="display:flex;gap:24px;font-size:14px;">
-        <a href="/discover/">Discover</a>
+      <div class="foot-links">
+        <div class="foot-col">
+          <b>Explore</b>
+          <a href="/discover/">Discover</a>
         <a href="/deals/">Deals</a>
-        <a href="/blog/">Blog</a>
-        <a href="/guidelines/">Guidelines</a>
-        <a href="/terms/">Terms</a>
-        <a href="/contact/">Contact</a>
+          <a href="/categories/">Categories</a>
+          <a href="/blog/">Blog & Guides</a>
+          <a href="/submit/">Submit Website</a>
+        </div>
+        <div class="foot-col">
+          <b>Trust & Legal</b>
+          <a href="/guidelines/">Submission Guidelines</a>
+          <a href="/privacy/">Privacy Policy</a>
+          <a href="/terms/">Terms of Service</a>
+          <a href="/disclaimer/">Disclaimer</a>
+          <a href="/contact/">Contact Us</a>
+        </div>
       </div>
+    </div>
+    <div class="wrap foot-copy">
+      © 2026 BacklinkBase. All rights reserved.
     </div>
   </footer>
 
