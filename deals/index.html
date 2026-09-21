@@ -2,19 +2,19 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Exclusive Startup & Tool Deals | BacklinkBase</title>
   <meta name="description" content="Discover verified discounts, coupons, and exclusive promotions from vetted software, tools, and SaaS startups on BacklinkBase.">
   <link rel="canonical" href="https://backlinkbase.org/deals/">
   <link rel="stylesheet" href="/assets/style.css?v=3.5">
 </head>
-<body>
+<body data-page="deals">
   <header class="top">
     <div class="wrap topin">
       <a class="brand" href="/">Backlink<span>Base</span></a>
       <nav class="nav desktop-nav">
         <a href="/discover/">Discover</a>
-        <a href="/deals/">Deals</a>
+        <a href="/deals/" class="active">Deals</a>
         <a href="/categories/">Categories</a>
         <a href="/guidelines/">Guidelines</a>
         <a href="/blog/">Blog</a>
@@ -30,7 +30,7 @@
     </div>
     <div class="mobile-nav" id="mobileNav">
       <a href="/discover/">Discover</a>
-        <a href="/deals/">Deals</a>
+      <a href="/deals/" class="active">Deals</a>
       <a href="/categories/">Categories</a>
       <a href="/guidelines/">Guidelines</a>
       <a href="/blog/">Blog</a>
@@ -38,47 +38,39 @@
     </div>
   </header>
 
-  <div id="mobileMenu" class="mobile-drawer">
-    <a href="/discover/">Discover Directory</a>
-    <a href="/deals/">Exclusive Deals 🔥</a>
-    <a href="/blog/">Blog & Insights</a>
-    <a href="/guidelines/">Guidelines</a>
-    <a href="/submit/" class="btn btn-primary" style="text-align:center;margin-top:12px;">Submit Website</a>
-  </div>
-
-  <main class="page-shell">
-    <div style="text-align:center;max-width:700px;margin:32px auto 48px;">
-      <span class="badge" style="background:var(--bg-subtle);border:1px solid var(--line);padding:6px 14px;border-radius:20px;font-size:13px;font-weight:600;">🎁 Founder Verified Deals</span>
-      <h1 style="font-size:36px;font-weight:800;letter-spacing:-1px;margin:16px 0 12px;">Exclusive Software Discounts & Deals</h1>
-      <p style="color:var(--text-muted);font-size:16px;line-height:24px;">Browse hand-verified promotional offers, coupons, and lifetime deals directly from verified website owners.</p>
+  <main class="wrap" style="padding-top:28px;padding-bottom:60px;">
+    <div style="text-align:center;max-width:700px;margin:0 auto 36px;padding:0 12px;">
+      <span class="badge" style="display:inline-flex;align-items:center;gap:6px;background:var(--bg-subtle);border:1px solid var(--line);padding:6px 16px;border-radius:999px;font-size:13px;font-weight:600;color:var(--text);">🎁 Founder Verified Deals</span>
+      <h1 style="font-size:clamp(24px, 5.5vw, 36px);font-weight:800;letter-spacing:-0.03em;margin:16px 0 12px;line-height:1.2;color:var(--text);">Exclusive Software Discounts &amp; Deals</h1>
+      <p style="color:var(--text-sub);font-size:clamp(14px, 3.5vw, 16px);line-height:1.55;margin:0 auto;max-width:600px;">Browse hand-verified promotional offers, coupons, and lifetime deals directly from verified website owners.</p>
     </div>
 
-    <div id="dealsGrid" class="directory-grid" style="display:grid;grid-template-columns:repeat(auto-fill, minmax(320px, 1fr));gap:20px;">
-      <div class="card" style="padding:24px;border-radius:12px;background:var(--bg-subtle);border:1px solid var(--line);display:flex;flex-direction:column;gap:14px;">
-        <div style="display:flex;align-items:center;justify-content:space-between;">
-          <div style="display:flex;align-items:center;gap:12px;">
-            <img src="https://www.google.com/s2/favicons?domain=backlinkbase.org&sz=128" alt="BacklinkBase logo" width="36" height="36" style="border-radius:8px;">
-            <div>
-              <h3 style="margin:0;font-size:16px;font-weight:700;">BacklinkBase Priority</h3>
+    <div id="dealsGrid" class="grid">
+      <div class="card" style="padding:22px;border-radius:12px;background:var(--bg-card);border:1px solid var(--line);display:flex;flex-direction:column;gap:14px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;">
+          <div style="display:flex;align-items:center;gap:12px;min-width:0;">
+            <img src="https://www.google.com/s2/favicons?domain=backlinkbase.org&sz=128" alt="BacklinkBase logo" width="36" height="36" style="border-radius:8px;flex-shrink:0;">
+            <div style="min-width:0;">
+              <h3 style="margin:0;font-size:16px;font-weight:700;color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">BacklinkBase Priority</h3>
               <span style="font-size:12px;color:var(--text-muted);">backlinkbase.org</span>
             </div>
           </div>
-          <span style="background:#10b98120;color:#10b981;border:1px solid #10b98140;padding:4px 8px;border-radius:6px;font-size:11px;font-weight:700;">Verified Deal</span>
+          <span style="background:rgba(16, 185, 129, 0.12);color:#10b981;border:1px solid rgba(16, 185, 129, 0.3);padding:4px 8px;border-radius:6px;font-size:11px;font-weight:700;white-space:nowrap;">Verified Deal</span>
         </div>
-        <p style="margin:0;font-size:14px;color:var(--text-muted);line-height:20px;">Fast-track your website review and featured showcase placement on BacklinkBase directory.</p>
-        <div style="background:var(--bg);border:1px dashed var(--line);border-radius:8px;padding:12px;display:flex;align-items:center;justify-content:space-between;margin-top:auto;">
+        <p style="margin:0;font-size:14px;color:var(--text-sub);line-height:20px;">Fast-track your website review and featured showcase placement on BacklinkBase directory.</p>
+        <div style="background:var(--bg-subtle);border:1px dashed var(--line);border-radius:8px;padding:12px;display:flex;align-items:center;justify-content:space-between;gap:10px;margin-top:auto;">
           <div>
             <div style="font-size:11px;color:var(--text-muted);text-transform:uppercase;font-weight:600;">Promo Code</div>
             <code style="font-size:15px;font-weight:800;letter-spacing:1px;color:var(--text);">LAUNCH100</code>
           </div>
-          <button class="btn btn-secondary" onclick="navigator.clipboard.writeText('LAUNCH100');this.textContent='Copied!';setTimeout(()=>this.textContent='Copy Code',2000)" style="padding:6px 12px;font-size:12px;">Copy Code</button>
+          <button class="btn" onclick="navigator.clipboard.writeText('LAUNCH100');this.textContent='Copied!';setTimeout(()=>this.textContent='Copy Code',2000)" style="padding:6px 12px;font-size:12px;flex-shrink:0;">Copy Code</button>
         </div>
-        <a href="/submit/" class="btn btn-primary" style="text-align:center;font-size:13px;padding:8px 0;">Claim Deal & Submit</a>
+        <a href="/submit/" class="btn primary" style="text-align:center;font-size:13px;padding:10px 0;width:100%;margin-top:4px;">Claim Deal &amp; Submit</a>
       </div>
     </div>
   </main>
 
-    <footer class="foot">
+  <footer class="foot">
     <div class="wrap footin">
       <div class="foot-brand-col">
         <a class="brand" href="/">Backlink<span>Base</span></a>
