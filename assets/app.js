@@ -101,7 +101,7 @@ document.addEventListener("click", function(e) {
 });
 
 const CATS=["AI","Artificial Intelligence","Technology","Software","SaaS","Web Tools","Developer Tools","Programming","Design","Graphics","Marketing","SEO","Business","Finance","E-commerce","Shopping","Education","Learning","News","Media","Entertainment","Games","Gaming","Health","Fitness","Travel","Food","Recipes","Lifestyle","Personal Blogs","Photography","Video","Music","Sports","Jobs","Careers","Real Estate","Construction","Home Improvement","Automotive","Legal","Government","Nonprofit","Communities","Forums","Social","Productivity","Utilities","Internet Services","Hosting","Domains","Security","Cybersecurity","Mobile Apps","Android","iOS","WordPress","Blogging","Newsletters","Online Services","Directories","Reference","Science","Research","Books","Literature","Art","Fashion","Beauty","Parenting","Pets","Shopping Deals","Local Businesses","Startups","Agencies","Freelancers","Portfolios","Other"];
-const SUPABASE_URL="https://trjrqfpxxfadxeabvtvf.supabase.co",SUPABASE_KEY="sb_publishable_syWcZtTdkXtgcdrc4-2aag_1cL9bCvM",SB_HEADERS={apikey:SUPABASE_KEY,Authorization:"Bearer "+SUPABASE_KEY,"Content-Type":"application/json"},EDGE_URL=SUPABASE_URL+"/functions/v1/directory-write";
+const API_BASE="/api";
 
 const esc=s=>String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
 
@@ -176,15 +176,31 @@ function setupMenu(){
 }
 
 async function sb(path,opts={}){
-  const r=await fetch(SUPABASE_URL+"/rest/v1/"+path,{...opts,headers:{...SB_HEADERS,...(opts.headers||{})}});
+  let url = API_BASE + "/sites";
+  if(path.startsWith("categories")){
+    url = API_BASE + "/categories";
+  } else if(path.startsWith("sites")){
+    const params = new URLSearchParams();
+    if(path.includes("category_id=eq.")){
+      const catMatch = path.match(/category_id=eq\.([^&]+)/);
+      if(catMatch) params.set("category", catMatch[1]);
+    }
+    if(path.includes("or=")){
+      const searchMatch = path.match(/ilike\.\*([^\*]+)\*/);
+      if(searchMatch) params.set("search", decodeURIComponent(searchMatch[1]));
+    }
+    const qs = params.toString();
+    url = API_BASE + "/sites" + (qs ? "?" + qs : "");
+  }
+  const r=await fetch(url,{...opts});
   if(!r.ok)throw new Error(await r.text());
   return r.status===204?null:r.json();
 }
 
 async function edge(action,payload={}){
-  const r=await fetch(EDGE_URL,{
+  const r=await fetch(API_BASE + "/submit",{
     method:"POST",
-    headers:{apikey:SUPABASE_KEY,"Content-Type":"application/json"},
+    headers:{"Content-Type":"application/json"},
     body:JSON.stringify({action,...payload})
   });
   let j={};
