@@ -448,9 +448,21 @@ header, .top {
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
-.card-foot, .site-actions {
+.card-foot {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.site-actions {
   display: flex;
   justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+}
+.card-rank-wrap {
+  display: inline-flex;
   align-items: center;
 }
 .visit-btn {
