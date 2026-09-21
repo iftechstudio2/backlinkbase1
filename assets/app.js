@@ -411,12 +411,29 @@ async function fetchMeta(){
   if(status)status.innerHTML='<div class="notice info"><span class="spinner"></span> Contacting metadata provider...</div>';
   
   try{
-    const r=await fetch("https://api.microlink.io?url="+encodeURIComponent(u));
-    const j=await r.json();
-    const data=j.data||{};
-    const titleVal=data.title||data.ogTitle||d;
-    const descVal=data.description||data.ogDescription||"";
-    const logoVal=data.logo?.url||data.image?.url||("https://www.google.com/s2/favicons?domain="+encodeURIComponent(d)+"&sz=128");
+    let titleVal = d;
+    let descVal = "";
+    let logoVal = "https://www.google.com/s2/favicons?domain=" + encodeURIComponent(d) + "&sz=128";
+
+    try {
+      const r = await fetch(API_BASE + "/fetch-meta?url=" + encodeURIComponent(u));
+      if (r.ok) {
+        const j = await r.json();
+        if (j.title) titleVal = j.title;
+        if (j.description) descVal = j.description;
+        if (j.logo_url) logoVal = j.logo_url;
+      }
+    } catch(err) {
+      // Fallback to microlink if needed
+      try {
+        const r2 = await fetch("https://api.microlink.io?url=" + encodeURIComponent(u));
+        const j2 = await r2.json();
+        const data = j2.data || {};
+        if (data.title || data.ogTitle) titleVal = data.title || data.ogTitle;
+        if (data.description || data.ogDescription) descVal = data.description || data.ogDescription;
+        if (data.logo?.url || data.image?.url) logoVal = data.logo?.url || data.image?.url;
+      } catch(e) {}
+    }
     
     if(document.getElementById("title"))document.getElementById("title").value=titleVal;
     if(document.getElementById("description"))document.getElementById("description").value=descVal;
