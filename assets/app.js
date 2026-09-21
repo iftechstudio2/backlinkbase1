@@ -218,13 +218,13 @@ function iconFor(s){
 
 function card(s, rank = 0){
   const rankHtml = rank === 1 
-    ? '<span class="rank-badge rank-1" title="Rank #1 this week">👑 #1 Tool of the Week</span>' 
+    ? '<span class="rank-badge rank-1" title="Rank #1 this week">👑 #1 This Week</span>' 
     : rank === 2 
-    ? '<span class="rank-badge rank-2" title="Rank #2 this week">🥈 #2</span>' 
+    ? '<span class="rank-badge rank-2" title="Rank #2 this week">🥈 #2 This Week</span>' 
     : rank === 3 
-    ? '<span class="rank-badge rank-3" title="Rank #3 this week">🥉 #3</span>' 
+    ? '<span class="rank-badge rank-3" title="Rank #3 this week">🥉 #3 This Week</span>' 
     : rank > 3 
-    ? '<span class="rank-badge rank-n">🔥 #' + rank + '</span>' 
+    ? '<span class="rank-badge rank-n">🔥 #' + rank + ' This Week</span>' 
     : '';
   const title=s.title||s.domain||"Website";
   const desc=s.description||"Discover and explore verified tools and services on BacklinkBase.";
@@ -248,10 +248,11 @@ function card(s, rank = 0){
         '<h3 class="card-title">' + esc(title) + '</h3>' +
         '<span class="card-domain">' + esc(s.domain||"") + '</span>' +
       '</div>' +
-      (rankHtml ? rankHtml : '') + '<span class="badge">' + esc(cat) + '</span>' +
+      '<span class="badge">' + esc(cat) + '</span>' +
     '</div>' +
     '<p class="card-desc">' + esc(desc) + '</p>' +
     '<div class="card-foot">' +
+      (rankHtml ? '<div class="card-rank-wrap">' + rankHtml + '</div>' : '<div></div>') +
       '<div class="card-actions">' +
         '<div class="share-popover-wrap">' +
           '<button type="button" class="action-btn share-trigger" onclick="handleCardShare(this, \'' + esc(shareUrl) + '\', \'' + esc(safeTitle) + '\')" title="Share this website" aria-label="Share">' +
