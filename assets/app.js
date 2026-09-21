@@ -216,7 +216,16 @@ function iconFor(s){
   return "https://www.google.com/s2/favicons?domain=" + encodeURIComponent(s.domain || "example.com") + "&sz=128";
 }
 
-function card(s){
+function card(s, rank = 0){
+  const rankHtml = rank === 1 
+    ? '<span class="rank-badge rank-1" title="Rank #1 this week">👑 #1 Tool of the Week</span>' 
+    : rank === 2 
+    ? '<span class="rank-badge rank-2" title="Rank #2 this week">🥈 #2</span>' 
+    : rank === 3 
+    ? '<span class="rank-badge rank-3" title="Rank #3 this week">🥉 #3</span>' 
+    : rank > 3 
+    ? '<span class="rank-badge rank-n">🔥 #' + rank + '</span>' 
+    : '';
   const title=s.title||s.domain||"Website";
   const desc=s.description||"Discover and explore verified tools and services on BacklinkBase.";
   const cat=s.categories?.name||s.category_name||s.category||"General";
@@ -239,7 +248,7 @@ function card(s){
         '<h3 class="card-title">' + esc(title) + '</h3>' +
         '<span class="card-domain">' + esc(s.domain||"") + '</span>' +
       '</div>' +
-      '<span class="badge">' + esc(cat) + '</span>' +
+      (rankHtml ? rankHtml : '') + '<span class="badge">' + esc(cat) + '</span>' +
     '</div>' +
     '<p class="card-desc">' + esc(desc) + '</p>' +
     '<div class="card-foot">' +
@@ -268,7 +277,7 @@ function card(s){
             '</button>' +
           '</div>' +
         '</div>' +
-        '<a class="action-btn visit-btn" href="' + esc(targetUrl) + '" target="_blank" rel="noopener noreferrer nofollow">' +
+        '<a class="action-btn visit-btn" href="/api/visit?id=' + encodeURIComponent(s.id) + '" target="_blank" rel="noopener noreferrer nofollow" title="Visit ' + esc(title) + '">' +
           '<span>Visit</span>' +
           '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>' +
         '</a>' +
@@ -278,20 +287,41 @@ function card(s){
 }
 
 async function home(){
-  const box=document.getElementById("latest");
-  if(!box)return;
-  box.innerHTML='<div class="loading-state" style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text-muted)"><span class="spinner"></span> Loading websites from directory...</div>';
-  try{
-    const rows=await sb("sites?select=id,title,description,domain,url,logo_url,submitted_at,categories(name)&status=eq.approved&order=submitted_at.desc&limit=18");
-    if(!rows||!rows.length){
-      box.innerHTML='<div class="empty" style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text-muted)">No approved websites yet. Be the first to <a href="/submit/" style="color:var(--text);font-weight:700">submit a website</a>!</div>';
+  // 1. Load Weekly Leaderboard (Top 7)
+  const lbBox = document.getElementById("leaderboard");
+  if (lbBox) {
+    try {
+      const res = await fetch("/api/leaderboard");
+      if (res.ok) {
+        const topSites = await res.json();
+        if (topSites && topSites.length > 0) {
+          lbBox.className = "grid";
+          lbBox.innerHTML = topSites.map((s, idx) => card(s, idx + 1)).join("");
+        } else {
+          lbBox.innerHTML = '<div class="empty" style="grid-column:1/-1;text-align:center;padding:30px;color:var(--text-muted)">The weekly leaderboard updates as verified visits are counted. Be the first to explore!</div>';
+        }
+      }
+    } catch (err) {
+      console.warn("Leaderboard fetch error:", err);
+      lbBox.style.display = "none";
+    }
+  }
+
+  // 2. Load Latest Discoveries
+  const box = document.getElementById("latest");
+  if (!box) return;
+  box.innerHTML = '<div class="loading-state" style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text-muted)"><span class="spinner"></span> Loading websites from directory...</div>';
+  try {
+    const rows = await sb("sites?select=id,title,description,domain,url,logo_url,submitted_at,view_count,categories(name)&status=eq.approved&order=submitted_at.desc&limit=18");
+    if (!rows || !rows.length) {
+      box.innerHTML = '<div class="empty" style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text-muted)">No approved websites yet. Be the first to <a href="/submit/" style="color:var(--text);font-weight:700">submit a website</a>!</div>';
       return;
     }
-    box.className="grid";
-    box.innerHTML=rows.map(card).join("");
-  }catch(e){
+    box.className = "grid";
+    box.innerHTML = rows.map(s => card(s, 0)).join("");
+  } catch(e) {
     console.error("Home loading error:", e);
-    box.innerHTML='<div class="empty" style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text-muted)">Unable to load websites right now. Please check back shortly.</div>';
+    box.innerHTML = '<div class="empty" style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text-muted)">Unable to load websites right now. Please check back shortly.</div>';
   }
 }
 
@@ -571,11 +601,11 @@ window.handleSendOtp = async function() {
   const urlInput = document.getElementById("url")?.value.trim();
 
   if (!urlInput) {
-    status.innerHTML = "<div class="notice err">Please enter your website URL at the top first.</div>";
+    status.innerHTML = '<div class="notice err">Please enter your website URL at the top first.</div>';
     return;
   }
   if (!user) {
-    status.innerHTML = "<div class="notice err">Please enter the username for your domain email (e.g. contact, info).</div>";
+    status.innerHTML = '<div class="notice err">Please enter the username for your domain email (e.g. contact, info).</div>';
     return;
   }
 
@@ -583,14 +613,14 @@ window.handleSendOtp = async function() {
   try {
     d = domain(normalizeUrl(urlInput));
   } catch(e) {
-    status.innerHTML = "<div class="notice err">Please enter a valid website URL.</div>";
+    status.innerHTML = '<div class="notice err">Please enter a valid website URL.</div>';
     return;
   }
 
   const fullEmail = user + "@" + d;
   btn.disabled = true;
   btn.textContent = "Sending...";
-  status.innerHTML = "<div class="notice info"><span class="spinner"></span> Sending verification code to " + esc(fullEmail) + "...</div>";
+  status.innerHTML = '<div class="notice info"><span class="spinner"></span> Sending verification code to ' + esc(fullEmail) + '...</div>';
 
   try {
     const res = await fetch(API_BASE + "/send-otp", {
@@ -603,10 +633,10 @@ window.handleSendOtp = async function() {
       throw new Error(data.error || "Failed to send verification email");
     }
     window._challengeToken = data.challengeToken;
-    status.innerHTML = "<div class="notice ok">Code sent to " + esc(fullEmail) + "! Check your inbox/spam (valid for 10 min).</div>";
+    status.innerHTML = '<div class="notice ok">Code sent to ' + esc(fullEmail) + '! Check your inbox/spam (valid for 10 min).</div>';
     document.getElementById("otpInputRow").style.display = "block";
   } catch(err) {
-    status.innerHTML = "<div class="notice err">" + esc(err.message) + "</div>";
+    status.innerHTML = '<div class="notice err">' + esc(err.message) + '</div>';
   } finally {
     btn.disabled = false;
     btn.textContent = "Send Code";
@@ -621,11 +651,11 @@ window.handleVerifyOtp = async function() {
   const urlInput = document.getElementById("url")?.value.trim();
 
   if (!code || code.length !== 6) {
-    status.innerHTML = "<div class="notice err">Please enter the complete 6-digit code.</div>";
+    status.innerHTML = '<div class=\"notice err\">Please enter the complete 6-digit code.</div>';
     return;
   }
   if (!window._challengeToken) {
-    status.innerHTML = "<div class="notice err">Please request a verification code first.</div>";
+    status.innerHTML = '<div class=\"notice err\">Please request a verification code first.</div>';
     return;
   }
 
@@ -651,14 +681,14 @@ window.handleVerifyOtp = async function() {
       throw new Error(data.error || "Verification failed");
     }
     window._promoProof = data.proofToken;
-    status.innerHTML = "<div class="notice ok" style="font-weight:bold;">✓ Domain verified successfully! Your exclusive deal is verified.</div>";
+    status.innerHTML = '<div class="notice ok" style="font-weight:bold;">✓ Domain verified successfully! Your exclusive deal is verified.</div>';
     btn.disabled = true;
     btn.textContent = "Verified ✓";
     document.getElementById("otpCode").disabled = true;
     document.getElementById("emailUser").disabled = true;
     document.getElementById("sendOtpBtn").disabled = true;
   } catch(err) {
-    status.innerHTML = "<div class="notice err">" + esc(err.message) + "</div>";
+    status.innerHTML = '<div class="notice err">' + esc(err.message) + '</div>';
     btn.disabled = false;
     btn.textContent = "Verify Code";
   }
